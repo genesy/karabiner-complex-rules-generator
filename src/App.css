@@ -1,3 +1,9 @@
+html,
+body,
+#root,
+.App {
+  height: 100%;
+}
 .form-container {
   padding: 10px;
   margin: 10px;
@@ -9,4 +15,9 @@
 }
 .form-container > div > div {
   padding: 5px;
+}
+
+.generated-code {
+  height: 100%;
+  width: 100%;
 }

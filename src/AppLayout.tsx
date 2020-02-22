@@ -1,11 +1,43 @@
-import React from 'react';
-import { Container, AppBar, Typography, Toolbar } from '@material-ui/core';
+import React, { useState } from 'react';
+import {
+  Container,
+  AppBar,
+  Typography,
+  Toolbar,
+  Grid,
+} from '@material-ui/core';
+import Form from './components/Form';
+import FormContext from './context/FormContext';
 
 interface Props {}
 
-const AppLayout: React.FC<Props> = ({ children }) => {
+const MainForm: React.FC<Props> = () => {
+  const [formState, setFormState] = useState({
+    type: '',
+    from: {},
+  });
   return (
-    <div>
+    <FormContext.Provider value={{ formState, setFormState }}>
+      <Grid container direction="row" justify="space-between">
+        <Grid item xs={6}>
+          <Form />
+        </Grid>
+        <Grid item xs={6}>
+          <textarea
+            className="generated-code"
+            readOnly
+            value={JSON.stringify(formState, null, 2)}
+          />
+          >
+        </Grid>
+      </Grid>
+    </FormContext.Provider>
+  );
+};
+
+const AppLayout: React.FC<Props> = () => {
+  return (
+    <>
       <AppBar position="static">
         <Container>
           <Toolbar>
@@ -13,8 +45,8 @@ const AppLayout: React.FC<Props> = ({ children }) => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Container>{children}</Container>
-    </div>
+      <MainForm />
+    </>
   );
 };
 

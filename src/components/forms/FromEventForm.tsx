@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   InputLabel,
   Select,
@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core';
 
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import FormContext from '../../context/FormContext';
 
 const optionalBoolean: string[] = ['unset', 'true', 'false'];
 const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
@@ -25,6 +26,9 @@ const pointButtons: string[] = [
 interface Props {}
 
 const FromEventForm: React.FC<Props> = () => {
+  const { formState, setFormState } = useContext(FormContext);
+  const [fromObject, setFromObject] = useState({});
+
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
     consumerKeyCode: false,
@@ -34,6 +38,10 @@ const FromEventForm: React.FC<Props> = () => {
     simultaneous: false,
     simultaneousOptions: false,
   });
+
+  useEffect(() => {
+    setFormState({ ...formState, from: fromObject });
+  }, [fromObject]);
   return (
     <div className="form-container">
       <Typography variant="h4">From</Typography>
@@ -87,6 +95,9 @@ const FromEventForm: React.FC<Props> = () => {
             variant="filled"
             label="key_code (optional)"
             fullWidth
+            onChange={e =>
+              setFromObject({ ...fromObject, key_code: e.target.value })
+            }
           />
         )}
         {showOptional.consumerKeyCode && (

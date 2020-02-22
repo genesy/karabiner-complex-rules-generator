@@ -1,12 +1,7 @@
-import React from 'react';
-import {
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Button,
-} from '@material-ui/core';
+import React, { useContext } from 'react';
+import { InputLabel, Select, MenuItem } from '@material-ui/core';
 import FromEventForm from './forms/FromEventForm';
+import FormContext from '../context/FormContext';
 
 interface Props {}
 
@@ -27,10 +22,19 @@ const types: string[] = [
 ];
 
 const Form: React.FC<Props> = () => {
+  const context = useContext(FormContext);
+  console.log({ context });
+  const { formState, setFormState } = context;
   return (
     <div>
       <InputLabel id="type">type</InputLabel>
-      <Select labelId="type" value={types[0]}>
+      <Select
+        labelId="type"
+        defaultValue={types[0]}
+        onChange={e => {
+          setFormState({ ...formState, type: e.target.value });
+        }}
+      >
         {types.map(type => (
           <MenuItem value={type} key={type}>
             {type}
