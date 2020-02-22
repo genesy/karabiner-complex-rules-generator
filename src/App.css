@@ -1,0 +1,12 @@
+.form-container {
+  padding: 10px;
+  margin: 10px;
+  background: #eee;
+}
+
+.form-container > div {
+  padding: 5px;
+}
+.form-container > div > div {
+  padding: 5px;
+}
