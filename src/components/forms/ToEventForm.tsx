@@ -23,7 +23,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
   const { getRuleByIndex, setRuleState } = useContext(FormContext);
   const ruleState = getRuleByIndex(ruleIndex);
   const [toObject, setToObject] = useState<IToEventDefinition>({
-    pointing_button: 'button1',
+    pointing_button: 'disabled',
     modifiers: [],
   });
 
@@ -45,7 +45,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
 
   useEffect(() => {
     const newToObject: any = { ...toObject };
-    if (!showOptional.pointingButton) {
+    if (newToObject.pointing_button === 'disabled') {
       delete newToObject.pointing_button;
     }
     if (!showOptional.keyCode && !!newToObject.key_code) {

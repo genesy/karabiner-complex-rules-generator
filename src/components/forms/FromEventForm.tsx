@@ -1,13 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  ButtonGroup,
-  Button,
-  Typography,
-} from '@material-ui/core';
+import { Box } from '@material-ui/core';
 
 import FormContext from '../../context/FormContext';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
@@ -28,7 +20,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
   const ruleState = getRuleByIndex(ruleIndex);
 
   const [fromObject, setFromObject] = useState<IFromEventDefinition>({
-    pointing_button: 'button1',
+    pointing_button: 'disabled',
     modifiers: {
       mandatory: [],
       optional: [],
@@ -39,8 +31,6 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
     keyCode: false,
     consumerKeyCode: false,
     pointingButton: false,
-    modifiersMandatory: false,
-    modifiersOptional: false,
     simultaneous: false,
     simultaneousOptions: false,
   });
@@ -50,6 +40,9 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
       ...fromObject,
       modifiers: { ...fromObject.modifiers },
     };
+    if (newFromObject.pointing_button === 'disabled') {
+      delete newFromObject.pointing_button;
+    }
     if (!showOptional.keyCode && !!newFromObject.key_code) {
       delete newFromObject.key_code;
     } else {
@@ -58,10 +51,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
     if (!showOptional.consumerKeyCode && !!newFromObject.consumer_key_code) {
       delete newFromObject.consumer_key_code;
     }
-    if (!showOptional.pointingButton) {
-      delete newFromObject.pointing_button;
-    }
-    if (!showOptional.modifiersMandatory && newFromObject.modifiers.mandatory) {
+    if (!newFromObject.modifiers?.mandatory.length) {
       delete newFromObject.modifiers.mandatory;
     } else {
       newFromObject.modifiers.mandatory = newFromObject.modifiers.mandatory.map(
@@ -69,7 +59,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
       );
     }
 
-    if (!showOptional.modifiersOptional && newFromObject.modifiers?.optional) {
+    if (!newFromObject.modifiers?.optional.length) {
       delete newFromObject.modifiers.optional;
     } else {
       newFromObject.modifiers.optional = newFromObject.modifiers.optional.map(
@@ -87,8 +77,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
   }, [fromObject, showOptional]);
 
   return (
-    <div className="form-container">
-      <Typography variant="h6">FROM EVENT DEFINITION</Typography>
+    <Box className="form-container">
       <KeyCodeAndPointingButtonInput
         setShowOptional={setShowOptional}
         showOptional={showOptional}
@@ -97,66 +86,40 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
       />
       <div>
         <div>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setShowOptional({
-                ...showOptional,
-                modifiersMandatory: !showOptional.modifiersMandatory,
+          <KeyInput
+            modifiers
+            value={fromObject.modifiers.mandatory}
+            label="Mandatory Modifiers (optional)"
+            onChange={(_e: any, value: any) => {
+              setFromObject({
+                ...fromObject,
+                modifiers: {
+                  ...fromObject.modifiers,
+                  mandatory: value.map((v: any) =>
+                    typeof v === 'string' ? { label: v, value: v } : v,
+                  ),
+                },
               });
             }}
-          >
-            {showOptional.modifiersMandatory ? 'Remove' : 'Add'} Mandatory
-            Modifiers
-          </Button>
-          {showOptional.modifiersMandatory && (
-            <KeyInput
-              modifiers
-              value={fromObject.modifiers.mandatory}
-              onChange={(_e: any, value: any) => {
-                setFromObject({
-                  ...fromObject,
-                  modifiers: {
-                    ...fromObject.modifiers,
-                    mandatory: value.map((v: any) =>
-                      typeof v === 'string' ? { label: v, value: v } : v,
-                    ),
-                  },
-                });
-              }}
-            />
-          )}
+          />
         </div>
         <div>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setShowOptional({
-                ...showOptional,
-                modifiersOptional: !showOptional.modifiersOptional,
+          <KeyInput
+            modifiers
+            value={fromObject.modifiers.optional}
+            label="Optional Modifiers (optional)"
+            onChange={(e: any, value: any) => {
+              setFromObject({
+                ...fromObject,
+                modifiers: {
+                  ...fromObject.modifiers,
+                  optional: value.map((v: any) =>
+                    typeof v === 'string' ? { label: v, value: v } : v,
+                  ),
+                },
               });
             }}
-          >
-            {showOptional.modifiersOptional ? 'Remove' : 'Add'} Optional
-            Modifiers
-          </Button>
-          {showOptional.modifiersOptional && (
-            <KeyInput
-              modifiers
-              value={fromObject.modifiers.optional}
-              onChange={(e: any, value: any) => {
-                setFromObject({
-                  ...fromObject,
-                  modifiers: {
-                    ...fromObject.modifiers,
-                    optional: value.map((v: any) =>
-                      typeof v === 'string' ? { label: v, value: v } : v,
-                    ),
-                  },
-                });
-              }}
-            />
-          )}
+          />
         </div>
       </div>
       {/* <div>Simultaneous options coming soon</div> */}
@@ -214,7 +177,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
           </div>
         )}
       </div> */}
-    </div>
+    </Box>
   );
 };
 

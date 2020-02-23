@@ -1,4 +1,5 @@
 declare type PointingButton =
+  | 'disabled'
   | 'button1'
   | 'button2'
   | 'button3'

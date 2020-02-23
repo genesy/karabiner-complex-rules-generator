@@ -20,11 +20,11 @@ export const MODIFIERS = [
     value: 'right_control',
   },
   {
-    label: 'Left Alt',
+    label: 'Left Alt / Option',
     value: 'left_alt',
   },
   {
-    label: 'Right Alt',
+    label: 'Right Alt / Option',
     value: 'right_alt',
   },
   {
@@ -314,11 +314,11 @@ export const KEY_CODES = [
     value: 'delete_or_backspace',
   },
   {
-    label: 'Decrease Brightness',
+    label: 'Decrease Screen Brightness',
     value: 'display_brightness_decrement',
   },
   {
-    label: 'Increase Brightness',
+    label: 'Increase Screen Brightness',
     value: 'display_brightness_increment',
   },
   {

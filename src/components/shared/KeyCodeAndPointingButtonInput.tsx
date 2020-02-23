@@ -7,14 +7,35 @@ import {
   ButtonGroup,
   Button,
   Typography,
+  FormControl,
+  Box,
 } from '@material-ui/core';
 import KeyInput from './KeyInput';
-const pointingButtons: string[] = [
-  'button1',
-  'button2',
-  'button3',
-  'button4',
-  'button5',
+const pointingButtons: any[] = [
+  {
+    label: 'None',
+    value: 'disabled',
+  },
+  {
+    label: 'Left Click',
+    value: 'button1',
+  },
+  {
+    label: 'Right Click',
+    value: 'button2',
+  },
+  {
+    label: 'Middle Click',
+    value: 'button3',
+  },
+  {
+    label: 'Mouse 4',
+    value: 'button4',
+  },
+  {
+    label: 'Mouse 5',
+    value: 'button5',
+  },
 ];
 
 interface Props {
@@ -45,7 +66,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             });
           }}
         >
-          key_code
+          Key Code
         </Button>
         <Button
           disabled={showOptional.consumerKeyCode}
@@ -58,7 +79,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             });
           }}
         >
-          consumer_key_code
+          Consumer Key Code
         </Button>
         <Button
           variant="contained"
@@ -70,6 +91,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             });
           }}
           disabled={!(showOptional.keyCode || showOptional.consumerKeyCode)}
+          color="secondary"
         >
           Disable
         </Button>
@@ -82,6 +104,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             multiple={false}
             value={eventObject.key_code}
             autoHighlight={false}
+            label="Key Code (optional)"
             onChange={(_e: any, v: any) => {
               setEventObject({
                 ...eventObject,
@@ -95,7 +118,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             placeholder=""
             margin="normal"
             variant="filled"
-            label="consumer_key_code (optional)"
+            label="Consumer Key Code (optional)"
             fullWidth
             value={eventObject.consumer_key_code || ''}
             onChange={e =>
@@ -107,44 +130,28 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
           />
         )}
       </div>
-      {/* POINTING BUTTONS */}
 
-      <div>
-        <Button
-          disabled={showOptional.consumerKeyCode}
-          variant="contained"
-          onClick={() => {
-            setShowOptional({
-              ...showOptional,
-              pointingButton: !showOptional.pointingButton,
-            });
-          }}
-        >
-          {showOptional.pointingButton ? 'Remove' : 'Add'} pointing_button
-        </Button>
-
-        {showOptional.pointingButton && (
-          <>
-            <InputLabel id="type">pointing_button</InputLabel>
-            <Select
-              labelId="type"
-              value={eventObject.pointing_button || ''}
-              onChange={(event: any) => {
-                setEventObject({
-                  ...eventObject,
-                  pointing_button: event.target.value || '',
-                });
-              }}
-            >
-              {pointingButtons.map(pointingButton => (
-                <MenuItem value={pointingButton} key={pointingButton}>
-                  {pointingButton}
-                </MenuItem>
-              ))}
-            </Select>
-          </>
-        )}
-      </div>
+      <Box>
+        <FormControl variant="filled" fullWidth>
+          <InputLabel id="type">Pointing Button (optional)</InputLabel>
+          <Select
+            labelId="type"
+            value={eventObject.pointing_button || ''}
+            onChange={(event: any) => {
+              setEventObject({
+                ...eventObject,
+                pointing_button: event.target.value || '',
+              });
+            }}
+          >
+            {pointingButtons.map(({ label, value }) => (
+              <MenuItem value={value} key={value}>
+                {label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </div>
   );
 };
