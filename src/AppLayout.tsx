@@ -13,7 +13,7 @@ interface Props {}
 
 const MainForm: React.FC<Props> = () => {
   const [formState, setFormState] = useState({
-    type: '',
+    type: 'basic',
     from: {},
   });
   return (

@@ -15,7 +15,7 @@ const ModifierInput: React.FC<Props> = ({ value = [], onChange = e => {} }) => {
       multiple
       freeSolo
       options={MODIFIERS}
-      getOptionLabel={(o: any) => (typeof o === 'object' ? o.value : o)}
+      getOptionLabel={(o: any) => (typeof o === 'object' ? o.label : o)}
       value={value}
       onChange={onChange}
       renderInput={params => (
@@ -23,7 +23,7 @@ const ModifierInput: React.FC<Props> = ({ value = [], onChange = e => {} }) => {
           {...params}
           variant="filled"
           label="mandatory"
-          placeholder="Favorites"
+          placeholder="Modifiers"
           fullWidth
         />
       )}

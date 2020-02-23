@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useEffect,
-  EventHandler,
-  ChangeEvent,
-} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   InputLabel,
   Select,
@@ -13,13 +7,10 @@ import {
   ButtonGroup,
   Button,
   Typography,
-  Chip,
 } from '@material-ui/core';
 
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormContext from '../../context/FormContext';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
-import { MODIFIERS } from '../../constants';
 import Modifier from '../../types/Modifier';
 import ModifierInput from '../shared/ModifierInput';
 
@@ -61,10 +52,10 @@ const FromEventForm: React.FC<Props> = () => {
       ...fromObject,
       modifiers: { ...fromObject.modifiers },
     };
-    if (!showOptional.keyCode && newFromObject.key_code) {
+    if (!showOptional.keyCode && !!newFromObject.key_code) {
       delete newFromObject.key_code;
     }
-    if (!showOptional.consumerKeyCode && newFromObject.consumer_key_code) {
+    if (!showOptional.consumerKeyCode && !!newFromObject.consumer_key_code) {
       delete newFromObject.consumer_key_code;
     }
     if (!showOptional.pointingButton) {
