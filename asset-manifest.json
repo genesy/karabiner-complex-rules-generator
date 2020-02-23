@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/karabiner-complex-rules-generator/static/css/main.6461c5b1.chunk.css",
+    "main.js": "/karabiner-complex-rules-generator/static/js/main.a3bb0639.chunk.js",
+    "main.js.map": "/karabiner-complex-rules-generator/static/js/main.a3bb0639.chunk.js.map",
+    "runtime-main.js": "/karabiner-complex-rules-generator/static/js/runtime-main.1ddd962b.js",
+    "runtime-main.js.map": "/karabiner-complex-rules-generator/static/js/runtime-main.1ddd962b.js.map",
+    "static/css/2.3c7f2c3d.chunk.css": "/karabiner-complex-rules-generator/static/css/2.3c7f2c3d.chunk.css",
+    "static/js/2.0292ace8.chunk.js": "/karabiner-complex-rules-generator/static/js/2.0292ace8.chunk.js",
+    "static/js/2.0292ace8.chunk.js.map": "/karabiner-complex-rules-generator/static/js/2.0292ace8.chunk.js.map",
+    "index.html": "/karabiner-complex-rules-generator/index.html",
+    "precache-manifest.42acc20abc64e24f3aa0f4c7172ec5a1.js": "/karabiner-complex-rules-generator/precache-manifest.42acc20abc64e24f3aa0f4c7172ec5a1.js",
+    "service-worker.js": "/karabiner-complex-rules-generator/service-worker.js",
+    "static/css/2.3c7f2c3d.chunk.css.map": "/karabiner-complex-rules-generator/static/css/2.3c7f2c3d.chunk.css.map",
+    "static/css/main.6461c5b1.chunk.css.map": "/karabiner-complex-rules-generator/static/css/main.6461c5b1.chunk.css.map",
+    "static/js/2.0292ace8.chunk.js.LICENSE.txt": "/karabiner-complex-rules-generator/static/js/2.0292ace8.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/karabiner-complex-rules-generator/static/media/roboto-latin-900italic.ebf6d164.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.1ddd962b.js",
+    "static/css/2.3c7f2c3d.chunk.css",
+    "static/js/2.0292ace8.chunk.js",
+    "static/css/main.6461c5b1.chunk.css",
+    "static/js/main.a3bb0639.chunk.js"
+  ]
+}
