@@ -12,6 +12,7 @@ interface Props {
   keyCodes?: boolean;
   multiple?: any;
   autoHighlight?: boolean;
+  freeSolo?: boolean;
 }
 
 const KeyInput: React.FC<Props> = ({
@@ -21,6 +22,7 @@ const KeyInput: React.FC<Props> = ({
   keyCodes = false,
   multiple = true,
   autoHighlight = false,
+  freeSolo = true,
 }) => {
   let options: Modifier[] = [];
   if (keyCodes) {
@@ -32,7 +34,7 @@ const KeyInput: React.FC<Props> = ({
   return (
     <Autocomplete
       multiple={multiple}
-      freeSolo
+      freeSolo={freeSolo}
       options={options}
       getOptionLabel={(o: any) => (typeof o === 'object' ? o.label : o) || ''}
       value={value}
@@ -42,8 +44,8 @@ const KeyInput: React.FC<Props> = ({
         <TextField
           {...params}
           variant="filled"
-          label="mandatory"
-          placeholder="Modifiers"
+          label="Keys"
+          placeholder="Keys"
           fullWidth
         />
       )}

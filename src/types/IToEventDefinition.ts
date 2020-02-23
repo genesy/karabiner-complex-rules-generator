@@ -12,5 +12,5 @@ export default interface IToEventDefinition {
   lazy?: Boolean;
   repeat?: Boolean;
   halt?: Boolean;
-  hold_down_milliseconds: Number;
+  hold_down_milliseconds?: Number;
 }

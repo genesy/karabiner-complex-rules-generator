@@ -1,10 +1,14 @@
 import { createContext } from 'react';
+import IToEventDefinition from '../types/IToEventDefinition';
 
-const FormContext = createContext({
-  setFormState: (s: any) => s,
-  formState: {
-    type: 'basic',
-  },
+type ContextProps = {
+  setFormState: any;
+  formState: any;
+};
+
+const FormContext = createContext<Partial<ContextProps>>({
+  setFormState: () => 1,
+  formState: {},
 });
 
 export default FormContext;

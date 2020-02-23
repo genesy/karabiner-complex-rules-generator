@@ -13,17 +13,11 @@ import FormContext from '../../context/FormContext';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
 import Modifier from '../../types/Modifier';
 import KeyInput from '../shared/KeyInput';
+import KeyCodeAndPointingButtonInput from '../shared/KeyCodeAndPointingButtonInput';
 
 const optionalBoolean: string[] = ['unset', 'true', 'false'];
 const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
 const keyUpWhen: string[] = ['unset', 'any', 'all'];
-const pointingButtons: string[] = [
-  'button1',
-  'button2',
-  'button3',
-  'button4',
-  'button5',
-];
 
 interface Props {}
 
@@ -90,123 +84,14 @@ const FromEventForm: React.FC<Props> = () => {
 
   return (
     <div className="form-container">
-      <Typography variant="h4">From</Typography>
-      {/* KEY CODES  */}
-      <ButtonGroup>
-        <Button
-          disabled={showOptional.keyCode}
-          variant="contained"
-          onClick={() => {
-            setShowOptional({
-              ...showOptional,
-              keyCode: true,
-              consumerKeyCode: false,
-            });
-          }}
-        >
-          key_code
-        </Button>
-        <Button
-          disabled={showOptional.consumerKeyCode}
-          variant="contained"
-          onClick={() => {
-            setShowOptional({
-              ...showOptional,
-              keyCode: false,
-              consumerKeyCode: true,
-            });
-          }}
-        >
-          consumer_key_code
-        </Button>
-        <Button
-          variant="contained"
-          onClick={() => {
-            setShowOptional({
-              ...showOptional,
-              keyCode: false,
-              consumerKeyCode: false,
-            });
-          }}
-          disabled={!(showOptional.keyCode || showOptional.consumerKeyCode)}
-        >
-          Disable
-        </Button>
-      </ButtonGroup>
+      <Typography variant="h6">FROM EVENT DEFINITION</Typography>
+      <KeyCodeAndPointingButtonInput
+        setShowOptional={setShowOptional}
+        showOptional={showOptional}
+        setEventObject={setFromObject}
+        eventObject={fromObject}
+      />
       <div>
-        {showOptional.keyCode && (
-          <KeyInput
-            keyCodes
-            modifiers
-            multiple={false}
-            value={fromObject.key_code}
-            autoHighlight={false}
-            onChange={(_e: any, v: any) => {
-              setFromObject({
-                ...fromObject,
-                key_code: typeof v === 'string' ? { label: v, value: v } : v,
-              });
-            }}
-          />
-        )}
-        {showOptional.consumerKeyCode && (
-          <TextField
-            placeholder=""
-            margin="normal"
-            variant="filled"
-            label="consumer_key_code (optional)"
-            fullWidth
-            value={fromObject.consumer_key_code || ''}
-            onChange={e =>
-              setFromObject({
-                ...fromObject,
-                consumer_key_code: e.currentTarget.value,
-              })
-            }
-          />
-        )}
-      </div>
-      {/* POINTING BUTTONS */}
-
-      <div>
-        <Button
-          disabled={showOptional.consumerKeyCode}
-          variant="contained"
-          onClick={() => {
-            setShowOptional({
-              ...showOptional,
-              pointingButton: !showOptional.pointingButton,
-            });
-          }}
-        >
-          {showOptional.pointingButton ? 'Hide' : 'Show'} pointing_button
-        </Button>
-
-        {showOptional.pointingButton && (
-          <>
-            <InputLabel id="type">pointing_button</InputLabel>
-            <Select
-              labelId="type"
-              value={fromObject.pointing_button || ''}
-              onChange={(event: any) => {
-                console.log(event);
-                setFromObject({
-                  ...fromObject,
-                  pointing_button: event.target.value || '',
-                });
-              }}
-            >
-              {pointingButtons.map(pointingButton => (
-                <MenuItem value={pointingButton} key={pointingButton}>
-                  {pointingButton}
-                </MenuItem>
-              ))}
-            </Select>
-          </>
-        )}
-      </div>
-      <div>
-        <Typography variant="h5">Modifiers</Typography>
         <div>
           <Button
             variant="contained"
@@ -217,14 +102,14 @@ const FromEventForm: React.FC<Props> = () => {
               });
             }}
           >
-            {showOptional.modifiersMandatory ? 'Hide' : 'Show'} Mandatory
+            {showOptional.modifiersMandatory ? 'Remove' : 'Add'} Mandatory
+            Modifiers
           </Button>
           {showOptional.modifiersMandatory && (
             <KeyInput
               modifiers
               value={fromObject.modifiers.mandatory}
               onChange={(_e: any, value: any) => {
-                console.log('changing mandatory');
                 setFromObject({
                   ...fromObject,
                   modifiers: {
@@ -248,7 +133,8 @@ const FromEventForm: React.FC<Props> = () => {
               });
             }}
           >
-            {showOptional.modifiersOptional ? 'Hide' : 'Show'} Optional
+            {showOptional.modifiersOptional ? 'Remove' : 'Add'} Optional
+            Modifiers
           </Button>
           {showOptional.modifiersOptional && (
             <KeyInput
@@ -269,7 +155,8 @@ const FromEventForm: React.FC<Props> = () => {
           )}
         </div>
       </div>
-      <div>
+      {/* <div>Simultaneous options coming soon</div> */}
+      {/* <div>
         <Typography variant="h5">Simultaneous</Typography>
         <Button
           variant="contained"
@@ -280,7 +167,7 @@ const FromEventForm: React.FC<Props> = () => {
             });
           }}
         >
-          {showOptional.simultaneous ? 'Hide' : 'Show'} Simultaneous
+          {showOptional.simultaneous ? 'Remove' : 'Add'} Simultaneous
         </Button>
         {showOptional.simultaneous && (
           <div>
@@ -322,7 +209,7 @@ const FromEventForm: React.FC<Props> = () => {
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

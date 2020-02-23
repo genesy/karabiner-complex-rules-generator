@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import { InputLabel, Select, MenuItem } from '@material-ui/core';
+import { InputLabel, Select, MenuItem, Button } from '@material-ui/core';
 import FromEventForm from './forms/FromEventForm';
 import FormContext from '../context/FormContext';
+import ToEventForm from './forms/ToEventForm';
 
 interface Props {}
 
@@ -21,8 +22,20 @@ const types: string[] = [
   'event_changed_unless',
 ];
 
+const toFields: string[] = [
+  'to',
+  'to_if_alone',
+  'to_if_held_down',
+  'to_after_key_up',
+];
 const Form: React.FC<Props> = () => {
   const { formState, setFormState } = useContext(FormContext);
+  const addToEventForm = (type: string) => {
+    const newFormState = { ...formState };
+    newFormState[type] = newFormState[type] || [];
+    newFormState[type].push({});
+    setFormState(newFormState);
+  };
   return (
     <div>
       <InputLabel id="type">type</InputLabel>
@@ -40,6 +53,25 @@ const Form: React.FC<Props> = () => {
         ))}
       </Select>
       <FromEventForm />
+      {toFields.map((toField: string) => {
+        return (
+          <div key={toField}>
+            {formState[toField] &&
+              formState[toField].map((to: any, index: number) => (
+                <ToEventForm type={toField} key={index} index={index} />
+              ))}
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => {
+                addToEventForm(toField);
+              }}
+            >
+              Add "{toField}" event definition
+            </Button>
+          </div>
+        );
+      })}
     </div>
   );
 };
