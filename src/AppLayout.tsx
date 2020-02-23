@@ -28,7 +28,6 @@ const MainForm: React.FC<Props> = () => {
             readOnly
             value={JSON.stringify(formState, null, 2)}
           />
-          >
         </Grid>
       </Grid>
     </FormContext.Provider>

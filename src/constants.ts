@@ -1,6 +1,3 @@
-import { InputLabel } from '@material-ui/core';
-import { loadavg } from 'os';
-
 const MODIFIERS = [
   {
     label: '1',
@@ -43,107 +40,107 @@ const MODIFIERS = [
     value: '0',
   },
   {
-    label: 'a',
+    label: 'A',
     value: 'a',
   },
   {
-    label: 'b',
+    label: 'B',
     value: 'b',
   },
   {
-    label: 'c',
+    label: 'C',
     value: 'c',
   },
   {
-    label: 'd',
+    label: 'D',
     value: 'd',
   },
   {
-    label: 'e',
+    label: 'E',
     value: 'e',
   },
   {
-    label: 'f',
+    label: 'F',
     value: 'f',
   },
   {
-    label: 'g',
+    label: 'G',
     value: 'g',
   },
   {
-    label: 'h',
+    label: 'H',
     value: 'h',
   },
   {
-    label: 'i',
+    label: 'I',
     value: 'i',
   },
   {
-    label: 'j',
+    label: 'J',
     value: 'j',
   },
   {
-    label: 'k',
+    label: 'K',
     value: 'k',
   },
   {
-    label: 'l',
+    label: 'L',
     value: 'l',
   },
   {
-    label: 'm',
+    label: 'M',
     value: 'm',
   },
   {
-    label: 'n',
+    label: 'N',
     value: 'n',
   },
   {
-    label: 'o',
+    label: 'O',
     value: 'o',
   },
   {
-    label: 'p',
+    label: 'P',
     value: 'p',
   },
   {
-    label: 'q',
+    label: 'Q',
     value: 'q',
   },
   {
-    label: 'r',
+    label: 'R',
     value: 'r',
   },
   {
-    label: 's',
+    label: 'S',
     value: 's',
   },
   {
-    label: 't',
+    label: 'T',
     value: 't',
   },
   {
-    label: 'u',
+    label: 'U',
     value: 'u',
   },
   {
-    label: 'v',
+    label: 'V',
     value: 'v',
   },
   {
-    label: 'w',
+    label: 'W',
     value: 'w',
   },
   {
-    label: 'x',
+    label: 'X',
     value: 'x',
   },
   {
-    label: 'y',
+    label: 'Y',
     value: 'y',
   },
   {
-    label: 'z',
+    label: 'Z',
     value: 'z',
   },
   {
@@ -199,7 +196,7 @@ const MODIFIERS = [
     value: 'esc',
   },
   {
-    label: '` grave accent, tilde',
+    label: '` Grave Accent, Tilde',
     value: 'grave_accent_and_tilde',
   },
   {
@@ -340,7 +337,7 @@ const MODIFIERS = [
   },
   {
     label: 'Rewind / Previous',
-    value: '',
+    value: 'rewind',
   },
   {
     label: 'Play or Pause',
