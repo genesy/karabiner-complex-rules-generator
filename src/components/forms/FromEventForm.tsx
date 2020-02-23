@@ -19,10 +19,14 @@ const optionalBoolean: string[] = ['unset', 'true', 'false'];
 const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
 const keyUpWhen: string[] = ['unset', 'any', 'all'];
 
-interface Props {}
+interface Props {
+  ruleIndex: number;
+}
 
-const FromEventForm: React.FC<Props> = () => {
-  const { formState, setFormState } = useContext(FormContext);
+const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
+  const { getRuleByIndex, setRuleState } = useContext(FormContext);
+  const ruleState = getRuleByIndex(ruleIndex);
+
   const [fromObject, setFromObject] = useState<IFromEventDefinition>({
     pointing_button: 'button1',
     modifiers: {
@@ -79,7 +83,7 @@ const FromEventForm: React.FC<Props> = () => {
       delete newFromObject.modifiers;
     }
 
-    setFormState({ ...formState, from: newFromObject });
+    setRuleState(ruleIndex, { ...ruleState, from: newFromObject });
   }, [fromObject, showOptional]);
 
   return (

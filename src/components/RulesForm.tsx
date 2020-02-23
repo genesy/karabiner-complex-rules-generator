@@ -4,7 +4,9 @@ import FromEventForm from './forms/FromEventForm';
 import FormContext from '../context/FormContext';
 import ToEventForm from './forms/ToEventForm';
 
-interface Props {}
+interface Props {
+  index: number;
+}
 
 const types: string[] = [
   'basic',
@@ -28,22 +30,26 @@ const toFields: string[] = [
   'to_if_held_down',
   'to_after_key_up',
 ];
-const Form: React.FC<Props> = () => {
-  const { formState, setFormState } = useContext(FormContext);
+
+const RulesForm: React.FC<Props> = ({ index: ruleIndex }) => {
+  const { getRuleByIndex, setRuleState } = useContext(FormContext);
+  const ruleState = getRuleByIndex(ruleIndex);
+
+  // add 'to event form'
   const addToEventForm = (type: string) => {
-    const newFormState = { ...formState };
-    newFormState[type] = newFormState[type] || [];
-    newFormState[type].push({});
-    setFormState(newFormState);
+    const newRuleState = { ...ruleState };
+    newRuleState[type] = newRuleState[type] || [];
+    newRuleState[type].push({});
+    setRuleState(ruleIndex, newRuleState);
   };
   return (
     <div>
       <InputLabel id="type">type</InputLabel>
       <Select
         labelId="type"
-        value={formState.type}
+        value={ruleState.type}
         onChange={e => {
-          setFormState({ ...formState, type: e.target.value });
+          setRuleState(ruleIndex, { ...ruleState, type: e.target.value });
         }}
       >
         {types.map(type => (
@@ -52,13 +58,18 @@ const Form: React.FC<Props> = () => {
           </MenuItem>
         ))}
       </Select>
-      <FromEventForm />
+      <FromEventForm ruleIndex={ruleIndex} />
       {toFields.map((toField: string) => {
         return (
           <div key={toField}>
-            {formState[toField] &&
-              formState[toField].map((to: any, index: number) => (
-                <ToEventForm type={toField} key={index} index={index} />
+            {ruleState[toField] &&
+              ruleState[toField].map((to: any, index: number) => (
+                <ToEventForm
+                  type={toField}
+                  key={index}
+                  index={index}
+                  ruleIndex={ruleIndex}
+                />
               ))}
             <Button
               variant="contained"
@@ -76,4 +87,4 @@ const Form: React.FC<Props> = () => {
   );
 };
 
-export default Form;
+export default RulesForm;

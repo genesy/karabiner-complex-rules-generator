@@ -4,10 +4,14 @@ import IToEventDefinition from '../types/IToEventDefinition';
 type ContextProps = {
   setFormState: any;
   formState: any;
+  setRuleState: any;
+  getRuleByIndex: any;
 };
 
 const FormContext = createContext<Partial<ContextProps>>({
-  setFormState: () => 1,
+  setFormState: () => {},
+  setRuleState: () => {},
+  getRuleByIndex: () => {},
   formState: {},
 });
 

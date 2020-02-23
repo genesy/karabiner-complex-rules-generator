@@ -16,19 +16,21 @@ import KeyInput from '../shared/KeyInput';
 interface Props {
   type: string;
   index: number;
+  ruleIndex: number;
 }
 
-const ToEventForm: React.FC<Props> = ({ type, index }) => {
-  const { formState, setFormState } = useContext(FormContext);
+const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
+  const { getRuleByIndex, setRuleState } = useContext(FormContext);
+  const ruleState = getRuleByIndex(ruleIndex);
   const [toObject, setToObject] = useState<IToEventDefinition>({
     pointing_button: 'button1',
     modifiers: [],
   });
 
   const removeForm = () => {
-    const toArray = [...formState[type]];
+    const toArray = [...ruleState[type]];
     toArray.splice(index, 1);
-    setFormState({ ...formState, [type]: toArray });
+    setRuleState(ruleIndex, { ...ruleState, [type]: toArray });
   };
 
   const [showOptional, setShowOptional] = useState({
@@ -64,11 +66,11 @@ const ToEventForm: React.FC<Props> = ({ type, index }) => {
     if (newToObject.lazy === false) {
       delete newToObject.lazy;
     }
-    const toArray = [...formState[type]];
+    const toArray = [...ruleState[type]];
     toArray[index] = { ...newToObject };
 
-    setFormState({
-      ...formState,
+    setRuleState(ruleIndex, {
+      ...ruleState,
       [type]: toArray,
     });
   }, [toObject, showOptional]);
