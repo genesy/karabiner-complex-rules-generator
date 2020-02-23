@@ -22,15 +22,13 @@ const types: string[] = [
 ];
 
 const Form: React.FC<Props> = () => {
-  const context = useContext(FormContext);
-  console.log({ context });
-  const { formState, setFormState } = context;
+  const { formState, setFormState } = useContext(FormContext);
   return (
     <div>
       <InputLabel id="type">type</InputLabel>
       <Select
         labelId="type"
-        defaultValue={types[0]}
+        value={formState.type}
         onChange={e => {
           setFormState({ ...formState, type: e.target.value });
         }}

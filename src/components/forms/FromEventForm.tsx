@@ -1,4 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  EventHandler,
+  ChangeEvent,
+} from 'react';
 import {
   InputLabel,
   Select,
@@ -7,15 +13,20 @@ import {
   ButtonGroup,
   Button,
   Typography,
+  Chip,
 } from '@material-ui/core';
 
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormContext from '../../context/FormContext';
+import IFromEventDefinition from '../../types/IFromEventDefinition';
+import { MODIFIERS } from '../../constants';
+import Modifier from '../../types/Modifier';
+import ModifierInput from '../shared/ModifierInput';
 
 const optionalBoolean: string[] = ['unset', 'true', 'false'];
 const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
 const keyUpWhen: string[] = ['unset', 'any', 'all'];
-const pointButtons: string[] = [
+const pointingButtons: string[] = [
   'button1',
   'button2',
   'button3',
@@ -27,7 +38,13 @@ interface Props {}
 
 const FromEventForm: React.FC<Props> = () => {
   const { formState, setFormState } = useContext(FormContext);
-  const [fromObject, setFromObject] = useState({});
+  const [fromObject, setFromObject] = useState<IFromEventDefinition>({
+    pointing_button: 'button1',
+    modifiers: {
+      mandatory: [],
+      optional: [],
+    },
+  });
 
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
@@ -40,8 +57,44 @@ const FromEventForm: React.FC<Props> = () => {
   });
 
   useEffect(() => {
-    setFormState({ ...formState, from: fromObject });
-  }, [fromObject]);
+    const newFromObject: any = {
+      ...fromObject,
+      modifiers: { ...fromObject.modifiers },
+    };
+    if (!showOptional.keyCode && newFromObject.key_code) {
+      delete newFromObject.key_code;
+    }
+    if (!showOptional.consumerKeyCode && newFromObject.consumer_key_code) {
+      delete newFromObject.consumer_key_code;
+    }
+    if (!showOptional.pointingButton) {
+      delete newFromObject.pointing_button;
+    }
+    if (!showOptional.modifiersMandatory && newFromObject.modifiers.mandatory) {
+      delete newFromObject.modifiers.mandatory;
+    } else {
+      newFromObject.modifiers.mandatory = newFromObject.modifiers.mandatory.map(
+        (m: Modifier) => m.value,
+      );
+    }
+
+    if (!showOptional.modifiersOptional && newFromObject.modifiers?.optional) {
+      delete newFromObject.modifiers.optional;
+    } else {
+      newFromObject.modifiers.optional = newFromObject.modifiers.optional.map(
+        (m: Modifier) => m.value,
+      );
+    }
+    if (
+      !newFromObject.modifiers.mandatory &&
+      !newFromObject.modifiers.optional
+    ) {
+      delete newFromObject.modifiers;
+    }
+
+    setFormState({ ...formState, from: newFromObject });
+  }, [fromObject, showOptional]);
+
   return (
     <div className="form-container">
       <Typography variant="h4">From</Typography>
@@ -95,8 +148,9 @@ const FromEventForm: React.FC<Props> = () => {
             variant="filled"
             label="key_code (optional)"
             fullWidth
+            value={fromObject.key_code || ''}
             onChange={e =>
-              setFromObject({ ...fromObject, key_code: e.target.value })
+              setFromObject({ ...fromObject, key_code: e.currentTarget.value })
             }
           />
         )}
@@ -107,6 +161,13 @@ const FromEventForm: React.FC<Props> = () => {
             variant="filled"
             label="consumer_key_code (optional)"
             fullWidth
+            value={fromObject.consumer_key_code || ''}
+            onChange={e =>
+              setFromObject({
+                ...fromObject,
+                consumer_key_code: e.currentTarget.value,
+              })
+            }
           />
         )}
       </div>
@@ -127,19 +188,26 @@ const FromEventForm: React.FC<Props> = () => {
         </Button>
 
         {showOptional.pointingButton && (
-          <Autocomplete
-            multiple
-            options={pointButtons}
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="filled"
-                label="mandatory"
-                placeholder="Favorites"
-                fullWidth
-              />
-            )}
-          />
+          <>
+            <InputLabel id="type">pointing_button</InputLabel>
+            <Select
+              labelId="type"
+              value={fromObject.pointing_button || ''}
+              onChange={(event: any) => {
+                console.log(event);
+                setFromObject({
+                  ...fromObject,
+                  pointing_button: event.target.value || '',
+                });
+              }}
+            >
+              {pointingButtons.map(pointingButton => (
+                <MenuItem value={pointingButton} key={pointingButton}>
+                  {pointingButton}
+                </MenuItem>
+              ))}
+            </Select>
+          </>
         )}
       </div>
       <div>
@@ -157,19 +225,21 @@ const FromEventForm: React.FC<Props> = () => {
             {showOptional.modifiersMandatory ? 'Hide' : 'Show'} Mandatory
           </Button>
           {showOptional.modifiersMandatory && (
-            <Autocomplete
-              multiple
-              freeSolo
-              options={[]}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  variant="filled"
-                  label="mandatory"
-                  placeholder="Favorites"
-                  fullWidth
-                />
-              )}
+            // TODO: separate to own component to reuse
+            <ModifierInput
+              value={fromObject.modifiers.mandatory}
+              onChange={(_e: any, value: any) => {
+                console.log('changing mandatory');
+                setFromObject({
+                  ...fromObject,
+                  modifiers: {
+                    ...fromObject.modifiers,
+                    mandatory: value.map((v: any) =>
+                      typeof v === 'string' ? { label: v, value: v } : v,
+                    ),
+                  },
+                });
+              }}
             />
           )}
         </div>
@@ -186,19 +256,19 @@ const FromEventForm: React.FC<Props> = () => {
             {showOptional.modifiersOptional ? 'Hide' : 'Show'} Optional
           </Button>
           {showOptional.modifiersOptional && (
-            <Autocomplete
-              multiple
-              freeSolo
-              options={[]}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  variant="filled"
-                  label="optional"
-                  placeholder="Favorites"
-                  fullWidth
-                />
-              )}
+            <ModifierInput
+              value={fromObject.modifiers.optional}
+              onChange={(e: any, value: any) => {
+                setFromObject({
+                  ...fromObject,
+                  modifiers: {
+                    ...fromObject.modifiers,
+                    optional: value.map((v: any) =>
+                      typeof v === 'string' ? { label: v, value: v } : v,
+                    ),
+                  },
+                });
+              }}
             />
           )}
         </div>
