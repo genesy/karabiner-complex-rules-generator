@@ -12,7 +12,7 @@ import {
 import FormContext from '../../context/FormContext';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
 import Modifier from '../../types/Modifier';
-import ModifierInput from '../shared/ModifierInput';
+import KeyInput from '../shared/KeyInput';
 
 const optionalBoolean: string[] = ['unset', 'true', 'false'];
 const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
@@ -54,6 +54,8 @@ const FromEventForm: React.FC<Props> = () => {
     };
     if (!showOptional.keyCode && !!newFromObject.key_code) {
       delete newFromObject.key_code;
+    } else {
+      newFromObject.key_code = newFromObject.key_code?.value;
     }
     if (!showOptional.consumerKeyCode && !!newFromObject.consumer_key_code) {
       delete newFromObject.consumer_key_code;
@@ -133,16 +135,18 @@ const FromEventForm: React.FC<Props> = () => {
       </ButtonGroup>
       <div>
         {showOptional.keyCode && (
-          <TextField
-            placeholder=""
-            margin="normal"
-            variant="filled"
-            label="key_code (optional)"
-            fullWidth
-            value={fromObject.key_code || ''}
-            onChange={e =>
-              setFromObject({ ...fromObject, key_code: e.currentTarget.value })
-            }
+          <KeyInput
+            keyCodes
+            modifiers
+            multiple={false}
+            value={fromObject.key_code}
+            autoHighlight={false}
+            onChange={(_e: any, v: any) => {
+              setFromObject({
+                ...fromObject,
+                key_code: typeof v === 'string' ? { label: v, value: v } : v,
+              });
+            }}
           />
         )}
         {showOptional.consumerKeyCode && (
@@ -217,7 +221,8 @@ const FromEventForm: React.FC<Props> = () => {
           </Button>
           {showOptional.modifiersMandatory && (
             // TODO: separate to own component to reuse
-            <ModifierInput
+            <KeyInput
+              modifiers
               value={fromObject.modifiers.mandatory}
               onChange={(_e: any, value: any) => {
                 console.log('changing mandatory');
@@ -247,7 +252,8 @@ const FromEventForm: React.FC<Props> = () => {
             {showOptional.modifiersOptional ? 'Hide' : 'Show'} Optional
           </Button>
           {showOptional.modifiersOptional && (
-            <ModifierInput
+            <KeyInput
+              modifiers
               value={fromObject.modifiers.optional}
               onChange={(e: any, value: any) => {
                 setFromObject({

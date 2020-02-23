@@ -1,4 +1,42 @@
-const MODIFIERS = [
+export const MODIFIERS = [
+  {
+    label: 'Function key',
+    value: 'fn',
+  },
+  {
+    label: 'Left Command',
+    value: 'left_gui',
+  },
+  {
+    label: 'Right Command',
+    value: 'right_gui',
+  },
+  {
+    label: 'Left Control',
+    value: 'left_control',
+  },
+  {
+    label: 'Right Control',
+    value: 'right_control',
+  },
+  {
+    label: 'Left Alt',
+    value: 'left_alt',
+  },
+  {
+    label: 'Right Alt',
+    value: 'right_alt',
+  },
+  {
+    label: 'Left Shift',
+    value: 'left_shift',
+  },
+  {
+    label: 'Right Shift',
+    value: 'right_shift',
+  },
+];
+export const KEY_CODES = [
   {
     label: '1',
     value: '1',
@@ -193,7 +231,7 @@ const MODIFIERS = [
   },
   {
     label: 'Escape',
-    value: 'esc',
+    value: 'escape',
   },
   {
     label: '` Grave Accent, Tilde',
@@ -206,42 +244,6 @@ const MODIFIERS = [
   {
     label: 'Caps Lock',
     value: 'caps_lock',
-  },
-  {
-    label: 'Function key',
-    value: 'fn',
-  },
-  {
-    label: 'Left Command',
-    value: 'left_gui',
-  },
-  {
-    label: 'Right Command',
-    value: 'right_gui',
-  },
-  {
-    label: 'Left Control',
-    value: 'left_control',
-  },
-  {
-    label: 'Right Control',
-    value: 'right_control',
-  },
-  {
-    label: 'Left Alt',
-    value: 'left_alt',
-  },
-  {
-    label: 'Right Alt',
-    value: 'right_alt',
-  },
-  {
-    label: 'Left Shift',
-    value: 'left_shift',
-  },
-  {
-    label: 'Right Shift',
-    value: 'right_shift',
   },
   {
     label: 'Spacebar',
@@ -360,5 +362,3 @@ const MODIFIERS = [
     value: 'volume_increment',
   },
 ];
-
-export { MODIFIERS };
