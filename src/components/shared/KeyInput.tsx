@@ -33,8 +33,8 @@ const KeyInput: React.FC<Props> = ({
     <Autocomplete
       multiple={multiple}
       freeSolo
-      options={[...KEY_CODES, ...MODIFIERS]}
-      getOptionLabel={(o: any) => (typeof o === 'object' ? o.label : o)}
+      options={options}
+      getOptionLabel={(o: any) => (typeof o === 'object' ? o.label : o) || ''}
       value={value}
       onChange={onChange}
       autoHighlight={autoHighlight}

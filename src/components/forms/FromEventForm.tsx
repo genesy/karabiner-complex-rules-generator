@@ -220,7 +220,6 @@ const FromEventForm: React.FC<Props> = () => {
             {showOptional.modifiersMandatory ? 'Hide' : 'Show'} Mandatory
           </Button>
           {showOptional.modifiersMandatory && (
-            // TODO: separate to own component to reuse
             <KeyInput
               modifiers
               value={fromObject.modifiers.mandatory}
