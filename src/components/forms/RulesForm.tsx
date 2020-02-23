@@ -91,16 +91,16 @@ const RulesForm: React.FC<Props> = ({ index: ruleIndex }) => {
         </ExpansionPanelSummary>
         <FromEventForm ruleIndex={ruleIndex} />
       </ExpansionPanel>
-      {toFields.map((toField: string) => {
+      {toFields.map((toField: string, toFieldsIndex: number) => {
         return (
           ruleState[toField] && (
-            <ExpansionPanel key={toField}>
+            <ExpansionPanel key={toFieldsIndex} defaultExpanded>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                 "{titleCase(toField)}" Events
               </ExpansionPanelSummary>
               <Box p={2}>
                 {ruleState[toField].map((to: any, index: number) => (
-                  <ExpansionPanel key={index}>
+                  <ExpansionPanel key={index} defaultExpanded={index === 0}>
                     <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                       {index + 1}
                       {suffix(index + 1)} "{titleCase(toField)}" Event

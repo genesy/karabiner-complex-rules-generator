@@ -23,6 +23,14 @@ const initialRule = {
   type: 'basic',
   from: {},
 };
+
+// TODO: move to separate file
+const toFields: string[] = [
+  'to',
+  'to_if_alone',
+  'to_if_held_down',
+  'to_after_key_up',
+];
 const MainForm: React.FC<Props> = () => {
   const [formState, setFormState] = useState<FormState>({
     title: '',
@@ -33,6 +41,11 @@ const MainForm: React.FC<Props> = () => {
     const newFormState = { ...formState };
     const newRules = [...formState.rules];
     newRules[index] = { ...rule };
+    toFields.map(toField => {
+      if (newRules[index][toField]?.length === 0) {
+        delete newRules[index][toField];
+      }
+    });
     newFormState.rules = newRules;
     setFormState(newFormState);
   };
@@ -53,8 +66,7 @@ const MainForm: React.FC<Props> = () => {
       }}
     >
       <Grid container direction="row" justify="space-between">
-        <Grid item xs={4}></Grid>
-        <Grid item xs={4}>
+        <Grid item xs>
           <Box p={1}>
             <TextField
               fullWidth
@@ -65,7 +77,7 @@ const MainForm: React.FC<Props> = () => {
               label="Title"
             />
             {formState.rules.map((rule, index) => (
-              <ExpansionPanel defaultExpanded={index === 0}>
+              <ExpansionPanel defaultExpanded={index === 0} key={index}>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
                   {index +
                     1 +
@@ -89,7 +101,7 @@ const MainForm: React.FC<Props> = () => {
             </Button>
           </Box>
         </Grid>
-        <Grid item xs={4} container>
+        <Grid item xs container>
           <textarea
             className="generated-code"
             readOnly

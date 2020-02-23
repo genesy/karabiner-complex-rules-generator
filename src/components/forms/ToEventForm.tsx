@@ -12,6 +12,7 @@ import {
   Button,
 } from '@material-ui/core';
 import KeyInput from '../shared/KeyInput';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 interface Props {
   type: string;
@@ -25,6 +26,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
   const [toObject, setToObject] = useState<IToEventDefinition>({
     pointing_button: 'disabled',
     modifiers: [],
+    repeat: true,
   });
 
   const removeForm = () => {
@@ -66,6 +68,12 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
     if (newToObject.lazy === false) {
       delete newToObject.lazy;
     }
+    if (newToObject.repeat === true) {
+      delete newToObject.repeat;
+    }
+    if (newToObject.halt === false) {
+      delete newToObject.halt;
+    }
     const toArray = [...ruleState[type]];
     toArray[index] = { ...newToObject };
 
@@ -76,23 +84,17 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
   }, [toObject, showOptional]);
   return (
     <div className="form-container">
-      <Button color="secondary" onClick={() => removeForm()}>
-        Remove
-      </Button>
-      <Typography variant="h6">
-        {type.toUpperCase()}[{index}] EVENT DEFINITION
-      </Typography>
       <KeyCodeAndPointingButtonInput
         showOptional={showOptional}
         setShowOptional={setShowOptional}
         setEventObject={setToObject}
         eventObject={toObject}
       />
-      <Typography variant="h6">Modifiers</Typography>
       <KeyInput
         freeSolo={false}
         modifiers
         value={toObject.modifiers}
+        label="Modifiers"
         onChange={(e: any, value: any) => {
           console.log({ value });
           setToObject({
@@ -103,8 +105,8 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
           });
         }}
       />
-      <FormControl>
-        <FormLabel>Options</FormLabel>
+      <FormControl fullWidth>
+        <FormLabel>Additional Options</FormLabel>
         <FormControlLabel
           label="Lazy"
           control={
@@ -116,7 +118,38 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
             />
           }
         />
+        <FormControlLabel
+          label="Repeat"
+          control={
+            <Checkbox
+              checked={!!toObject.repeat}
+              onChange={e => {
+                setToObject({ ...toObject, repeat: e.target.checked });
+              }}
+            />
+          }
+        />
+        <FormControlLabel
+          label="Halt"
+          control={
+            <Checkbox
+              checked={!!toObject.halt}
+              onChange={e => {
+                setToObject({ ...toObject, halt: e.target.checked });
+              }}
+            />
+          }
+        />
       </FormControl>
+
+      <Button
+        color="secondary"
+        variant="contained"
+        onClick={() => removeForm()}
+        startIcon={<DeleteIcon />}
+      >
+        Remove
+      </Button>
     </div>
   );
 };
