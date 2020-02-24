@@ -52,7 +52,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
   setEventObject = obj => {},
 }) => {
   return (
-    <div>
+    <Box marginBottom={2}>
       {/* KEY CODES  */}
       <ButtonGroup>
         <Button
@@ -96,7 +96,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
           Disable
         </Button>
       </ButtonGroup>
-      <div>
+      <Box marginBottom={1}>
         {showOptional.keyCode && (
           <KeyInput
             keyCodes
@@ -129,7 +129,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             }
           />
         )}
-      </div>
+      </Box>
 
       <Box>
         <FormControl variant="filled" fullWidth>
@@ -152,7 +152,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
           </Select>
         </FormControl>
       </Box>
-    </div>
+    </Box>
   );
 };
 

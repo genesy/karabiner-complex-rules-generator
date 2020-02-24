@@ -18,6 +18,7 @@ import FormContext from '../../context/FormContext';
 import ToEventForm from './ToEventForm';
 import AddIcon from '@material-ui/icons/Add';
 import { suffix, titleCase } from '../../helpers';
+import AddConditionForm from './AddConditionForm';
 
 interface Props {
   index: number;
@@ -55,6 +56,15 @@ const RulesForm: React.FC<Props> = ({ index: ruleIndex }) => {
     const newRuleState = { ...ruleState };
     newRuleState[type] = newRuleState[type] || [];
     newRuleState[type].push({});
+    setRuleState(ruleIndex, newRuleState);
+  };
+
+  const addConditionToRule = () => {
+    const newRuleState = { ...ruleState };
+    newRuleState.conditions = newRuleState.conditions || [];
+    newRuleState.conditions.push({
+      type: 'frontmost_application_if',
+    });
     setRuleState(ruleIndex, newRuleState);
   };
   return (
@@ -119,24 +129,59 @@ const RulesForm: React.FC<Props> = ({ index: ruleIndex }) => {
           )
         );
       })}
+      {ruleState.conditions && (
+        <ExpansionPanel defaultExpanded>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            Rule Conditions
+          </ExpansionPanelSummary>
+          <Box p={1}>
+            {ruleState.conditions.map((condition: string, index: number) => {
+              return (
+                <AddConditionForm
+                  index={index}
+                  setCondition={(condition: string) => {
+                    const newRuleState = { ...ruleState };
+                    newRuleState.conditions[index] = condition;
+                    setRuleState({ ...newRuleState });
+                  }}
+                  condition={condition}
+                />
+              );
+            })}
+          </Box>
+        </ExpansionPanel>
+      )}
 
       <Box>
-        {toFields.map((toField: string) => {
-          return (
-            <Button
-              key={toField}
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                addToEventForm(toField);
-              }}
-              startIcon={<AddIcon />}
-              size="small"
-            >
-              {toField}
-            </Button>
-          );
-        })}
+        <Typography>Add "To" Events</Typography>
+        <ButtonGroup>
+          {toFields.map((toField: string, index: number) => {
+            return (
+              <Button
+                key={toField}
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  addToEventForm(toField);
+                }}
+                size="small"
+              >
+                {toField}
+              </Button>
+            );
+          })}
+        </ButtonGroup>
+      </Box>
+      <Box marginTop={1}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => {
+            addConditionToRule();
+          }}
+        >
+          Add Conditions
+        </Button>
       </Box>
     </Box>
   );

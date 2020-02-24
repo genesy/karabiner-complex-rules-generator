@@ -77,7 +77,7 @@ const FromEventForm: React.FC<Props> = ({ ruleIndex }) => {
   }, [fromObject, showOptional]);
 
   return (
-    <Box className="form-container">
+    <Box className="form-container" p={1}>
       <KeyCodeAndPointingButtonInput
         setShowOptional={setShowOptional}
         showOptional={showOptional}

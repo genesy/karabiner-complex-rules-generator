@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
+  Box,
 } from '@material-ui/core';
 import KeyInput from '../shared/KeyInput';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -39,8 +40,6 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
     keyCode: false,
     consumerKeyCode: false,
     pointingButton: false,
-    modifiersMandatory: false,
-    modifiersOptional: false,
     simultaneous: false,
     simultaneousOptions: false,
   });
@@ -83,7 +82,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
     });
   }, [toObject, showOptional]);
   return (
-    <div className="form-container">
+    <Box className="form-container">
       <KeyCodeAndPointingButtonInput
         showOptional={showOptional}
         setShowOptional={setShowOptional}
@@ -150,7 +149,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
       >
         Remove
       </Button>
-    </div>
+    </Box>
   );
 };
 
