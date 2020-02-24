@@ -139,12 +139,9 @@ const RulesForm: React.FC<Props> = ({ index: ruleIndex }) => {
               return (
                 <AddConditionForm
                   index={index}
-                  setCondition={(condition: string) => {
-                    const newRuleState = { ...ruleState };
-                    newRuleState.conditions[index] = condition;
-                    setRuleState({ ...newRuleState });
-                  }}
-                  condition={condition}
+                  setRuleState={setRuleState}
+                  ruleState={ruleState}
+                  ruleIndex={ruleIndex}
                 />
               );
             })}
