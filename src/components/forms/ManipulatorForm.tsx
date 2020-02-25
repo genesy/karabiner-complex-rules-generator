@@ -20,9 +20,8 @@ import ToEventForm from './ToEventForm';
 import IManipulator from '../../types/IManipulator';
 import ICondition from '../../types/ICondition';
 import FromEventForm from './FromEventForm';
-interface Props {
-  manipulator: IManipulator;
-}
+import IRule from '../../types/IRule';
+import IFromEventDefinition from '../../types/IFromEventDefinition';
 const toFields: string[] = [
   'to',
   'to_if_alone',
@@ -83,30 +82,32 @@ const ToEventForms: React.FC<Props2> = ({ manipulator }) => {
   );
 };
 
-const ManipulatorForm: React.FC<Props> = ({ manipulator }) => {
-  const [manipulatorState, setManipulatorState] = useState<IManipulator>(
-    manipulator,
-  );
+interface Props {
+  manipulator: IManipulator;
+  setManipulator: (arg0: IManipulator) => void;
+}
 
+const ManipulatorForm: React.FC<Props> = ({ manipulator, setManipulator }) => {
   // add 'to event form'
   const addToEventForm = (type: string) => {
-    const newManipulatorState = { ...manipulatorState };
-    newManipulatorState[type] = newManipulatorState[type] || [];
-    newManipulatorState[type].push({});
-    setManipulatorState(newManipulatorState);
+    const newManipulator = { ...manipulator };
+    newManipulator[type] = newManipulator[type] || [];
+    newManipulator[type].push({});
+    setManipulator(newManipulator);
   };
   const addConditionToRule = () => {
-    const newManipulatorState = { ...manipulatorState };
-    newManipulatorState.conditions = newManipulatorState.conditions || [];
-    newManipulatorState.conditions.push({
+    const newManipulator = { ...manipulator };
+    newManipulator.conditions = newManipulator.conditions || [];
+    newManipulator.conditions.push({
       type: 'frontmost_application_if',
     });
-    setManipulatorState(newManipulatorState);
+    setManipulator(newManipulator);
   };
 
-  useEffect(() => {
-    setManipulatorState(manipulator);
-  }, [manipulator]);
+  const setFromObject = (newFromObject: IFromEventDefinition) => {
+    const newManipulator = { ...manipulator, from: newFromObject };
+    setManipulator(newManipulator);
+  };
 
   return (
     <div>
@@ -114,9 +115,9 @@ const ManipulatorForm: React.FC<Props> = ({ manipulator }) => {
         <InputLabel id="type">Type*</InputLabel>
         <Select
           labelId="type"
-          value={manipulatorState.type}
+          value={manipulator.type}
           onChange={(e: any) => {
-            setManipulatorState({ ...manipulatorState, type: e.target.value });
+            setManipulator({ ...manipulator, type: e.target.value });
           }}
         >
           {types.map(type => (
@@ -130,17 +131,20 @@ const ManipulatorForm: React.FC<Props> = ({ manipulator }) => {
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           "From" Event*
         </ExpansionPanelSummary>
-        <FromEventForm fromObject={manipulatorState.from} />
+        <FromEventForm
+          fromObject={manipulator.from}
+          setFromObject={setFromObject}
+        />
       </ExpansionPanel>
-      {/* <ToEventForms manipulator={manipulatorState} /> */}
+      {/* <ToEventForms manipulator={manipulator} /> */}
 
-      {manipulatorState.conditions && (
+      {manipulator.conditions && (
         <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             Rule Conditions
           </ExpansionPanelSummary>
           <Box p={1}>
-            {manipulatorState.conditions.map(
+            {manipulator.conditions.map(
               (condition: ICondition, index: number) => {
                 return (
                   <AddConditionForm

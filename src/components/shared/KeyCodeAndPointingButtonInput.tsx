@@ -47,7 +47,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
   eventObject = {},
   setEventObject = obj => {},
 }) => {
-  const [state, setState] = useState(eventObject);
+  // const [state, setState] = useState(eventObject);
 
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
@@ -74,7 +74,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
       consumerKeyCode: !!eventObject.consumer_key_code,
     };
     setShowOptional(newOptional);
-    setState(eventObject);
+    // setState(eventObject);
   }, [eventObject]);
 
   return (
@@ -127,13 +127,13 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             keyCodes
             modifiers
             multiple={false}
-            value={state.key_code}
+            value={eventObject.key_code}
             autoHighlight={false}
             label="Key Code (optional)"
             onChange={(_e: any, v: any) => {
               console.log(' w');
-              setState({
-                ...state,
+              setEventObject({
+                ...eventObject,
                 key_code: typeof v === 'string' ? { label: v, value: v } : v,
               });
             }}
@@ -146,10 +146,10 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             variant="filled"
             label="Consumer Key Code (optional)"
             fullWidth
-            value={state.consumer_key_code || ''}
+            value={eventObject.consumer_key_code || ''}
             onChange={e => {
-              setState({
-                ...state,
+              setEventObject({
+                ...eventObject,
                 consumer_key_code: e.currentTarget.value,
               });
             }}
@@ -162,10 +162,10 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
           <InputLabel id="type">Pointing Button (optional)</InputLabel>
           <Select
             labelId="type"
-            value={state.pointing_button || ''}
+            value={eventObject.pointing_button || ''}
             onChange={(event: any) => {
-              setState({
-                ...state,
+              setEventObject({
+                ...eventObject,
                 pointing_button: event.target.value || '',
               });
             }}

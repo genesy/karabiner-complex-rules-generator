@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RulesForm from './forms/RulesForm';
+import RuleForm from './forms/RuleForm';
 import FormContext from '../context/FormContext';
 import {
   Grid,
@@ -25,20 +25,26 @@ interface FormState {
   rules: any[];
 }
 
+const initialManipulator: IManipulator = {
+  type: 'basic',
+  from: {
+    modifiers: {
+      mandatory: [],
+      optional: [],
+    },
+    simultaneous: [],
+  },
+};
 const initialRule: IRule = {
   description: 'Rule 1 description',
-  manipulators: [
-    {
-      type: 'basic',
-      from: {
-        modifiers: {
-          mandatory: [],
-          optional: [],
-        },
-        simultaneous: [],
-      },
-    },
-  ],
+  manipulators: [],
+};
+
+const getInitialRule = (): IRule => {
+  return {
+    ...generateWithId(initialRule, 'rule'),
+    manipulators: [generateWithId(initialManipulator, 'manipulator')],
+  };
 };
 
 const generateWithId = (obj: any = {}, prefix: string = '') => {
@@ -155,24 +161,13 @@ const parseStateToMinimumJSON = (state: any) => {
 const MainForm: React.FC<Props> = () => {
   const [formState, setFormState] = useState<FormState>({
     title: '',
-    rules: [generateWithId(initialRule, 'rule')],
+    rules: [getInitialRule()],
   });
 
-  const setRuleState = (rule: IRule, newRule: IRule) => {
-    const index = _.findIndex(formState.rules, { _id: rule._id });
-    // console.log(index);
+  const setRule = (newRule: IRule) => {
+    const index = _.findIndex(formState.rules, { _id: newRule._id });
     const newFormState = _.cloneDeep(formState);
     newFormState.rules[index] = { ...newFormState.rules[index], ...newRule };
-    // const newFormState = { ...formState }n;
-    // const newRules = {...formState, rules: [...formState.rules]}
-    // const newRules = _.cloneDeep(formState.rules);
-    // newRules[index] = { ...rule };
-    // toFields.map(toField => {
-    //   if (newRules[index][toField]?.length === 0) {
-    //     delete newRules[index][toField];
-    //   }
-    // });
-    // newFormState.rules = newRules;
     setFormState({ ...newFormState });
   };
 
@@ -196,7 +191,6 @@ const MainForm: React.FC<Props> = () => {
       value={{
         formState,
         setFormState,
-        setRuleState,
         getRuleByIndex,
       }}
     >
@@ -222,7 +216,7 @@ const MainForm: React.FC<Props> = () => {
                     (rule.description ? ': ' + rule.description : '')}
                 </ExpansionPanelSummary>
                 <Box p={1}>
-                  <RulesForm key={index} rule={rule} />
+                  <RuleForm key={index} rule={rule} setRule={setRule} />
                 </Box>
               </ExpansionPanel>
             ))}

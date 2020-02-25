@@ -23,20 +23,20 @@ const keyUpWhen: string[] = ['unset', 'any', 'all'];
 
 interface Props {
   fromObject: IFromEventDefinition;
+  setFromObject: (args0: IFromEventDefinition) => void;
 }
 
-const FromEventForm: React.FC<Props> = ({ fromObject }) => {
-  const { setRuleState } = useContext(FormContext);
-  const [fromState, setFromState] = useState<IFromEventDefinition>({
-    ...initialFromObject,
-    ...fromObject,
-  });
+const FromEventForm: React.FC<Props> = ({ fromObject, setFromObject }) => {
+  // const [fromObject, setFromObject] = useState<IFromEventDefinition>({
+  //   ...initialFromObject,
+  //   ...fromObject,
+  // });
 
   const handleModifierChange = (event: any, value: any, type: string) => {
-    setFromState({
-      ...fromState,
+    setFromObject({
+      ...fromObject,
       modifiers: {
-        ...fromState.modifiers,
+        ...fromObject.modifiers,
         [type]: value.map((v: any) =>
           typeof v === 'string' ? { label: v, value: v } : v,
         ),
@@ -45,27 +45,27 @@ const FromEventForm: React.FC<Props> = ({ fromObject }) => {
   };
 
   const addSimultaneous = () => {
-    const newFromState = { ...fromState };
-    newFromState.simultaneous = newFromState.simultaneous || [];
-    newFromState.simultaneous.push({});
-    setFromState(newFromState);
+    const newFromObject = { ...fromObject };
+    newFromObject.simultaneous = newFromObject.simultaneous || [];
+    newFromObject.simultaneous.push({});
+    setFromObject(newFromObject);
   };
 
   useEffect(() => {
-    setFromState(fromObject);
+    setFromObject(fromObject);
   }, [fromObject]);
 
   return (
     <Box className="form-container" p={1}>
       <KeyCodeAndPointingButtonInput
-        setEventObject={() => {}}
-        eventObject={fromState}
+        setEventObject={setFromObject}
+        eventObject={fromObject}
       />
       <div>
         <div>
           <KeyInput
             modifiers
-            value={fromState.modifiers?.mandatory || []}
+            value={fromObject.modifiers?.mandatory || []}
             label="Mandatory Modifiers (optional)"
             onChange={(event: any, value: any) =>
               handleModifierChange(event, value, 'mandatory')
@@ -75,7 +75,7 @@ const FromEventForm: React.FC<Props> = ({ fromObject }) => {
         <div>
           <KeyInput
             modifiers
-            value={fromState.modifiers?.optional || []}
+            value={fromObject.modifiers?.optional || []}
             label="Optional Modifiers (optional)"
             onChange={(event: any, value: any) =>
               handleModifierChange(event, value, 'optional')
@@ -84,11 +84,11 @@ const FromEventForm: React.FC<Props> = ({ fromObject }) => {
         </div>
       </div>
       <Box>
-        {fromState.simultaneous?.map((simultaneous: any, index: number) => {
+        {fromObject.simultaneous?.map((simultaneous: any, index: number) => {
           const setSimultaneous = (newSimultaneousObject: any) => {
-            const newFromState = { ...fromState };
-            // newFromState.simultaneous[index] = newSimultaneousObject;
-            setFromState(newFromState);
+            const newFromObject = { ...fromObject };
+            // newFromObject.simultaneous[index] = newSimultaneousObject;
+            setFromObject(newFromObject);
           };
           return (
             <ExpansionPanel key={index}>
