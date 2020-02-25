@@ -1,25 +1,27 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React from 'react';
 import {
   Box,
+  ExpansionPanel,
+  ExpansionPanelSummary,
   Button,
+  FormControlLabel,
+  Checkbox,
+  FormControl,
   InputLabel,
   Select,
   MenuItem,
-  ExpansionPanel,
-  ExpansionPanelSummary,
 } from '@material-ui/core';
 
-import FormContext from '../../context/FormContext';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
-import Modifier from '../../types/Modifier';
 import KeyInput from '../shared/KeyInput';
 import KeyCodeAndPointingButtonInput from '../shared/KeyCodeAndPointingButtonInput';
-import { initialFromObject } from '../../initialStates';
 import _ from 'lodash';
+import { suffix, titleCase } from '../../helpers';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-const optionalBoolean: string[] = ['unset', 'true', 'false'];
-const keyOrder: string[] = ['unset', 'insensitive', 'strict', 'strict_inverse'];
-const keyUpWhen: string[] = ['unset', 'any', 'all'];
+const optionalBoolean: string[] = ['none', 'true', 'false'];
+const keyOrder: string[] = ['none', 'insensitive', 'strict', 'strict_inverse'];
+const keyUpWhen: string[] = ['none', 'any', 'all'];
 
 interface Props {
   fromObject: IFromEventDefinition;
@@ -27,11 +29,6 @@ interface Props {
 }
 
 const FromEventForm: React.FC<Props> = ({ fromObject, setFromObject }) => {
-  // const [fromObject, setFromObject] = useState<IFromEventDefinition>({
-  //   ...initialFromObject,
-  //   ...fromObject,
-  // });
-
   const handleModifierChange = (event: any, value: any, type: string) => {
     setFromObject({
       ...fromObject,
@@ -47,13 +44,11 @@ const FromEventForm: React.FC<Props> = ({ fromObject, setFromObject }) => {
   const addSimultaneous = () => {
     const newFromObject = { ...fromObject };
     newFromObject.simultaneous = newFromObject.simultaneous || [];
-    newFromObject.simultaneous.push({});
+    newFromObject.simultaneous.push({
+      _id: _.uniqueId('simultaneous_'),
+    });
     setFromObject(newFromObject);
   };
-
-  useEffect(() => {
-    setFromObject(fromObject);
-  }, [fromObject]);
 
   return (
     <Box className="form-container" p={1}>
@@ -87,20 +82,88 @@ const FromEventForm: React.FC<Props> = ({ fromObject, setFromObject }) => {
         {fromObject.simultaneous?.map((simultaneous: any, index: number) => {
           const setSimultaneous = (newSimultaneousObject: any) => {
             const newFromObject = { ...fromObject };
-            // newFromObject.simultaneous[index] = newSimultaneousObject;
+            const index = _.findIndex(fromObject.simultaneous, {
+              _id: newSimultaneousObject._id,
+            });
+            newFromObject.simultaneous = newFromObject.simultaneous || [];
+            newFromObject.simultaneous[index] = newSimultaneousObject;
             setFromObject(newFromObject);
           };
           return (
-            <ExpansionPanel key={index}>
-              <ExpansionPanelSummary>lol</ExpansionPanelSummary>
-              <KeyCodeAndPointingButtonInput
-                eventObject={simultaneous}
-                setEventObject={() => {}}
-              />
+            <ExpansionPanel key={index} defaultExpanded={index === 0}>
+              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                {index + 1}
+                {suffix(index + 1)} Simultaneous Event
+              </ExpansionPanelSummary>
+              <Box p={1}>
+                <KeyCodeAndPointingButtonInput
+                  eventObject={simultaneous}
+                  setEventObject={setSimultaneous}
+                />
+              </Box>
             </ExpansionPanel>
           );
         })}
-        <Button onClick={() => addSimultaneous()}>Add Simultaneous</Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => addSimultaneous()}
+        >
+          Add Simultaneous Event
+        </Button>
+      </Box>
+      <Box>
+        <ExpansionPanel>
+          <ExpansionPanelSummary>Simultaneous Options</ExpansionPanelSummary>
+          <Box p={1}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={
+                    !!fromObject?.simultaneous_options
+                      ?.detect_key_down_uninterruptedly
+                  }
+                  onChange={() => {}}
+                />
+              }
+              label="Detect Key Down Uninterruptedly"
+            />
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_down_order">Key Down Order</InputLabel>
+              <Select labelId="key_down_order" value={keyOrder[0]}>
+                {keyOrder.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_up_order">Key Up Order</InputLabel>
+              <Select labelId="key_up_order" value={keyOrder[0]}>
+                {keyOrder.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_up_when">Key Up When</InputLabel>
+              <Select labelId="key_up_when" value={keyUpWhen[0]}>
+                {keyUpWhen.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Button color="primary" variant="contained">
+              Add to_after_key_up event
+            </Button>
+          </Box>
+        </ExpansionPanel>
       </Box>
     </Box>
   );

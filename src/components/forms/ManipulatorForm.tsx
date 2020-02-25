@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
   Select,
   Box,
   ButtonGroup,
-  TextField,
   FormControl,
   InputLabel,
   MenuItem,
@@ -13,15 +12,16 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import { titleCase, suffix } from '../../helpers';
+import { titleCase } from '../../helpers';
 import AddConditionForm from './AddConditionForm';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ToEventForm from './ToEventForm';
 import IManipulator from '../../types/IManipulator';
 import ICondition from '../../types/ICondition';
 import FromEventForm from './FromEventForm';
-import IRule from '../../types/IRule';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
+import ToEventFormsContainer from './ToEventFormsContainer';
+import _ from 'lodash';
+
 const toFields: string[] = [
   'to',
   'to_if_alone',
@@ -44,44 +44,6 @@ const types: string[] = [
   'event_changed_unless',
 ];
 
-interface Props2 {
-  manipulator: IManipulator;
-}
-const ToEventForms: React.FC<Props2> = ({ manipulator }) => {
-  return (
-    <Box>
-      {toFields.map((toField: string, toFieldsIndex: number) => {
-        return (
-          manipulator[toField] && (
-            <ExpansionPanel key={toFieldsIndex} defaultExpanded>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                "{titleCase(toField)}" Events
-              </ExpansionPanelSummary>
-              <Box p={2}>
-                {manipulator[toField].map((_to: any, index: number) => (
-                  <ExpansionPanel key={index} defaultExpanded={index === 0}>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                      {index + 1}
-                      {suffix(index + 1)} "{titleCase(toField)}" Event
-                    </ExpansionPanelSummary>
-                    <Box p={1}>
-                      <ToEventForm
-                        type={toField}
-                        index={index}
-                        rule={manipulator}
-                      />
-                    </Box>
-                  </ExpansionPanel>
-                ))}
-              </Box>
-            </ExpansionPanel>
-          )
-        );
-      })}
-    </Box>
-  );
-};
-
 interface Props {
   manipulator: IManipulator;
   setManipulator: (arg0: IManipulator) => void;
@@ -92,7 +54,7 @@ const ManipulatorForm: React.FC<Props> = ({ manipulator, setManipulator }) => {
   const addToEventForm = (type: string) => {
     const newManipulator = { ...manipulator };
     newManipulator[type] = newManipulator[type] || [];
-    newManipulator[type].push({});
+    newManipulator[type].push({ repeat: true, _id: _.uniqueId(type + '_') });
     setManipulator(newManipulator);
   };
   const addConditionToRule = () => {
@@ -136,7 +98,10 @@ const ManipulatorForm: React.FC<Props> = ({ manipulator, setManipulator }) => {
           setFromObject={setFromObject}
         />
       </ExpansionPanel>
-      {/* <ToEventForms manipulator={manipulator} /> */}
+      <ToEventFormsContainer
+        manipulator={manipulator}
+        setManipulator={setManipulator}
+      />
 
       {manipulator.conditions && (
         <ExpansionPanel defaultExpanded>

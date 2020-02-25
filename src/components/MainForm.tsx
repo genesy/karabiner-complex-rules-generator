@@ -35,14 +35,10 @@ const initialManipulator: IManipulator = {
     simultaneous: [],
   },
 };
-const initialRule: IRule = {
-  description: 'Rule 1 description',
-  manipulators: [],
-};
 
-const getInitialRule = (): IRule => {
+const getInitialRule = (length = 1): IRule => {
   return {
-    ...generateWithId(initialRule, 'rule'),
+    ...generateWithId({ description: `Rule ${length}'s Description` }, 'rule'),
     manipulators: [generateWithId(initialManipulator, 'manipulator')],
   };
 };
@@ -171,19 +167,13 @@ const MainForm: React.FC<Props> = () => {
     setFormState({ ...newFormState });
   };
 
-  const [parsedState, setParsedState] = useState({});
-
-  useEffect(() => {
-    const newParsedState = parseStateToMinimumJSON(formState);
-    setParsedState(newParsedState);
-  }, [formState]);
-
   const getRuleByIndex = (index: number): any => formState.rules[index];
 
   const addRule = () => {
-    setFormState({
-      ...formState,
-    });
+    const newFormState = { ...formState };
+    newFormState.rules = newFormState.rules || [];
+    newFormState.rules.push(getInitialRule(newFormState.rules.length + 1));
+    setFormState({ ...newFormState });
   };
 
   return (
@@ -236,7 +226,7 @@ const MainForm: React.FC<Props> = () => {
             className="generated-code"
             // value={JSON.stringify(formState, null, 2)}
             readOnly
-            value={JSON.stringify(parsedState, null, 2)}
+            value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
           />
           <textarea
             onBlur={e => {

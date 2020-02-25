@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { Box, TextField, Button } from '@material-ui/core';
 
 import FormContext from '../../context/FormContext';

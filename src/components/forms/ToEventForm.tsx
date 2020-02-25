@@ -13,27 +13,19 @@ import {
 } from '@material-ui/core';
 import KeyInput from '../shared/KeyInput';
 import DeleteIcon from '@material-ui/icons/Delete';
+import IManipulator from '../../types/IManipulator';
 
 interface Props {
-  type: string;
-  index: number;
-  rule: any;
+  toObject: IToEventDefinition;
+  setToObject: (arg0: IToEventDefinition) => void;
+  removeToObject: () => void;
 }
 
-const ToEventForm: React.FC<Props> = ({ type, index, rule: ruleState }) => {
-  const { setRuleState } = useContext(FormContext);
-  const [toObject, setToObject] = useState<IToEventDefinition>({
-    pointing_button: 'disabled',
-    modifiers: [],
-    repeat: true,
-  });
-
-  const removeForm = () => {
-    const toArray = [...ruleState[type]];
-    toArray.splice(index, 1);
-    setRuleState({ ...ruleState, [type]: toArray });
-  };
-
+const ToEventForm: React.FC<Props> = ({
+  toObject,
+  setToObject,
+  removeToObject,
+}) => {
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
     consumerKeyCode: false,
@@ -71,13 +63,13 @@ const ToEventForm: React.FC<Props> = ({ type, index, rule: ruleState }) => {
     if (newToObject.halt === false) {
       delete newToObject.halt;
     }
-    const toArray = [...ruleState[type]];
-    toArray[index] = { ...newToObject };
+    // const toArray = [...ruleState[type]];
+    // toArray[index] = { ...newToObject };
 
-    setRuleState({
-      ...ruleState,
-      [type]: toArray,
-    });
+    // setRuleState({
+    //   ...ruleState,
+    //   [type]: toArray,
+    // });
   }, [toObject, showOptional]);
   return (
     <Box className="form-container">
@@ -140,7 +132,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, rule: ruleState }) => {
       <Button
         color="secondary"
         variant="contained"
-        onClick={() => removeForm()}
+        onClick={() => removeToObject()}
         startIcon={<DeleteIcon />}
       >
         Remove
