@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "2ee5a540e8a8362719ac5b42728b41b2",
+    "revision": "351058be7a0d5a252b15ac4cd4e305ff",
     "url": "/karabiner-complex-rules-generator/index.html"
   },
   {
