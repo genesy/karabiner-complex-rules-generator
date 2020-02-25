@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   InputLabel,
   Select,
@@ -14,7 +14,7 @@ import KeyInput from './KeyInput';
 const pointingButtons: any[] = [
   {
     label: 'None',
-    value: 'disabled',
+    value: '',
   },
   {
     label: 'Left Click',
@@ -39,21 +39,46 @@ const pointingButtons: any[] = [
 ];
 
 interface Props {
-  showOptional: any;
   eventObject: any;
-  setShowOptional: (obj: any) => void;
   setEventObject: (obj: any) => void;
 }
 
 const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
-  setShowOptional = obj => {},
-  showOptional = {},
   eventObject = {},
   setEventObject = obj => {},
 }) => {
+  const [state, setState] = useState(eventObject);
+
+  const [showOptional, setShowOptional] = useState({
+    keyCode: false,
+    consumerKeyCode: false,
+  });
+
+  useEffect(() => {
+    const _eventObject = { ...eventObject };
+    if (showOptional.keyCode) {
+      delete _eventObject.consumer_key_code;
+    }
+    if (showOptional.consumerKeyCode) {
+      delete _eventObject.key_code;
+    }
+    if (!showOptional.keyCode && !showOptional.consumerKeyCode) {
+      delete _eventObject.key_code;
+      delete _eventObject.consumer_key_code;
+    }
+  }, [showOptional]);
+
+  useEffect(() => {
+    const newOptional = {
+      keyCode: !!eventObject.key_code,
+      consumerKeyCode: !!eventObject.consumer_key_code,
+    };
+    setShowOptional(newOptional);
+    setState(eventObject);
+  }, [eventObject]);
+
   return (
     <Box marginBottom={2}>
-      {/* KEY CODES  */}
       <ButtonGroup>
         <Button
           disabled={showOptional.keyCode}
@@ -102,12 +127,13 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             keyCodes
             modifiers
             multiple={false}
-            value={eventObject.key_code}
+            value={state.key_code}
             autoHighlight={false}
             label="Key Code (optional)"
             onChange={(_e: any, v: any) => {
-              setEventObject({
-                ...eventObject,
+              console.log(' w');
+              setState({
+                ...state,
                 key_code: typeof v === 'string' ? { label: v, value: v } : v,
               });
             }}
@@ -120,13 +146,13 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
             variant="filled"
             label="Consumer Key Code (optional)"
             fullWidth
-            value={eventObject.consumer_key_code || ''}
-            onChange={e =>
-              setEventObject({
-                ...eventObject,
+            value={state.consumer_key_code || ''}
+            onChange={e => {
+              setState({
+                ...state,
                 consumer_key_code: e.currentTarget.value,
-              })
-            }
+              });
+            }}
           />
         )}
       </Box>
@@ -136,10 +162,10 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
           <InputLabel id="type">Pointing Button (optional)</InputLabel>
           <Select
             labelId="type"
-            value={eventObject.pointing_button || ''}
+            value={state.pointing_button || ''}
             onChange={(event: any) => {
-              setEventObject({
-                ...eventObject,
+              setState({
+                ...state,
                 pointing_button: event.target.value || '',
               });
             }}

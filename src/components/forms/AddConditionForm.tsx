@@ -14,10 +14,8 @@ import { titleCase } from '../../helpers';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 interface Props {
-  setRuleState: (i: number, obj: any) => void;
+  condition: any;
   index: number;
-  ruleIndex: number;
-  ruleState: any;
 }
 
 const conditionTypes: string[] = [
@@ -25,18 +23,8 @@ const conditionTypes: string[] = [
   'frontmost_application_unless',
 ];
 
-const AddConditionForm: React.FC<Props> = ({
-  index,
-  setRuleState,
-  ruleIndex,
-  ruleState,
-}) => {
-  const [condition, setCondition] = useState({
-    type: '',
-    bundle_identifiers: [],
-    file_paths: [],
-    description: '',
-  });
+const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
+  const [conditionState, setConditionState] = useState(condition);
 
   const [showOptional, setShowOptional] = useState({
     description: false,
@@ -45,30 +33,31 @@ const AddConditionForm: React.FC<Props> = ({
   const addBundleIdentifier = () => {
     const newCondition: any = { ...condition };
     newCondition.bundle_identifiers.push('');
-    setCondition(newCondition);
+    setConditionState(newCondition);
   };
 
   const addFilePath = () => {
     const newCondition: any = { ...condition };
     newCondition.file_paths.push('');
-    setCondition(newCondition);
+    setConditionState(newCondition);
   };
 
   const setFilePath = (bundleIndex: number, value: string) => {
     const newCondition: any = { ...condition };
     newCondition.file_paths[bundleIndex] = value;
-    setCondition(newCondition);
+    setConditionState(newCondition);
   };
   const setBundleIdentifier = (bundleIndex: number, value: string) => {
     const newCondition: any = { ...condition };
     newCondition.bundle_identifiers[bundleIndex] = value;
-    setCondition(newCondition);
+    setConditionState(newCondition);
   };
 
   useEffect(() => {
-    const newConditions = [...ruleState.conditions];
-    newConditions[index] = condition;
-    setRuleState(ruleIndex, { ...ruleState, conditions: newConditions });
+    setConditionState(condition);
+    // const newConditions = [...ruleState.conditions];
+    // newConditions[index] = condition;
+    // setRuleState(ruleIndex, { ...ruleState, conditions: newConditions });
   }, [condition]);
 
   return (
@@ -95,17 +84,19 @@ const AddConditionForm: React.FC<Props> = ({
             </ExpansionPanelSummary>
 
             <Box p={1}>
-              {condition.bundle_identifiers.map((identifier, bundleIndex) => (
-                <TextField
-                  value={identifier}
-                  fullWidth
-                  variant="filled"
-                  label={`Regex Bundle Identifier ${bundleIndex + 1}`}
-                  onChange={e => {
-                    setBundleIdentifier(bundleIndex, e.target.value);
-                  }}
-                />
-              ))}
+              {condition.bundle_identifiers.map(
+                (identifier: string, bundleIndex: number) => (
+                  <TextField
+                    value={identifier}
+                    fullWidth
+                    variant="filled"
+                    label={`Regex Bundle Identifier ${bundleIndex + 1}`}
+                    onChange={e => {
+                      setBundleIdentifier(bundleIndex, e.target.value);
+                    }}
+                  />
+                ),
+              )}
             </Box>
           </ExpansionPanel>
         )}
@@ -116,17 +107,19 @@ const AddConditionForm: React.FC<Props> = ({
             </ExpansionPanelSummary>
 
             <Box p={1}>
-              {condition.file_paths.map((filePath, filePathIndex) => (
-                <TextField
-                  value={filePath}
-                  fullWidth
-                  variant="filled"
-                  label={`Regex File Path ${filePathIndex + 1}`}
-                  onChange={e => {
-                    setFilePath(filePathIndex, e.target.value);
-                  }}
-                />
-              ))}
+              {condition.file_paths.map(
+                (filePath: string, filePathIndex: number) => (
+                  <TextField
+                    value={filePath}
+                    fullWidth
+                    variant="filled"
+                    label={`Regex File Path ${filePathIndex + 1}`}
+                    onChange={e => {
+                      setFilePath(filePathIndex, e.target.value);
+                    }}
+                  />
+                ),
+              )}
             </Box>
           </ExpansionPanel>
         )}
@@ -138,7 +131,7 @@ const AddConditionForm: React.FC<Props> = ({
             label={`Condition Description (optional)`}
             value={condition.description}
             onChange={e => {
-              setCondition({ ...condition, description: e.target.value });
+              setConditionState({ ...condition, description: e.target.value });
             }}
           />
         )}

@@ -4,7 +4,6 @@ import FormContext from '../../context/FormContext';
 import IToEventDefinition from '../../types/IToEventDefinition';
 import Modifier from '../../types/Modifier';
 import {
-  Typography,
   FormControl,
   FormLabel,
   FormControlLabel,
@@ -18,12 +17,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 interface Props {
   type: string;
   index: number;
-  ruleIndex: number;
+  rule: any;
 }
 
-const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
-  const { getRuleByIndex, setRuleState } = useContext(FormContext);
-  const ruleState = getRuleByIndex(ruleIndex);
+const ToEventForm: React.FC<Props> = ({ type, index, rule: ruleState }) => {
+  const { setRuleState } = useContext(FormContext);
   const [toObject, setToObject] = useState<IToEventDefinition>({
     pointing_button: 'disabled',
     modifiers: [],
@@ -33,7 +31,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
   const removeForm = () => {
     const toArray = [...ruleState[type]];
     toArray.splice(index, 1);
-    setRuleState(ruleIndex, { ...ruleState, [type]: toArray });
+    setRuleState({ ...ruleState, [type]: toArray });
   };
 
   const [showOptional, setShowOptional] = useState({
@@ -76,7 +74,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
     const toArray = [...ruleState[type]];
     toArray[index] = { ...newToObject };
 
-    setRuleState(ruleIndex, {
+    setRuleState({
       ...ruleState,
       [type]: toArray,
     });
@@ -84,8 +82,6 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
   return (
     <Box className="form-container">
       <KeyCodeAndPointingButtonInput
-        showOptional={showOptional}
-        setShowOptional={setShowOptional}
         setEventObject={setToObject}
         eventObject={toObject}
       />
@@ -94,7 +90,7 @@ const ToEventForm: React.FC<Props> = ({ type, index, ruleIndex }) => {
         modifiers
         value={toObject.modifiers}
         label="Modifiers"
-        onChange={(e: any, value: any) => {
+        onChange={(_e: any, value: any) => {
           console.log({ value });
           setToObject({
             ...toObject,
