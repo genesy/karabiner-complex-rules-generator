@@ -158,14 +158,27 @@ const parseStateToMinimumJSON = (state: any) => {
           }
         },
       );
+
+      toFields.forEach(toField => {
+        if (!manipulator[toField]) return;
+        delete manipulator[toField]._id;
+        manipulator[toField] = manipulator[toField].map(
+          (toObject: IToEventDefinition) => {
+            if (toObject.key_code) {
+              toObject.key_code = parseKey(toObject.key_code);
+            }
+            if (toObject.modifiers) {
+              toObject.modifiers = parseKeys(toObject.modifiers);
+            }
+            return toObject;
+          },
+        );
+      });
       manipulator.from.simultaneous = newSimultaneous;
 
       if (_.isEmpty(manipulator.from.simultaneous)) {
         delete manipulator.from.simultaneous;
       }
-      // if (_.isEmpty(manipulator.from)) {
-      //   delete manipulator.from;
-      // }
       delete manipulator._id;
     });
     delete rule._id;
@@ -242,7 +255,7 @@ const MainForm: React.FC<Props> = () => {
               </Button>
             </Box>
           </Grid>
-          <Grid item xs container>
+          <Grid item xs>
             <Typography>Parsed JSON</Typography>
             <textarea
               className="generated-code"
@@ -261,12 +274,13 @@ const MainForm: React.FC<Props> = () => {
               readOnly
               // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
             />
-            <Typography>Test field to paste state</Typography>
             <textarea
+              placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
               className="generated-code"
               onBlur={e => {
                 try {
-                  setFormState(parseJSONfirst(e.target.value));
+                  if (e.target.value)
+                    setFormState(parseJSONfirst(e.target.value));
                 } catch (e) {
                   console.log({ e });
                 }

@@ -17,12 +17,12 @@ const AppLayout: React.FC<Props> = () => {
       <AppBar position="static">
         <Container>
           <Toolbar>
-            <Grid xs>
+            <Grid xs item>
               <Typography>
                 Karabiner Complex Modification | Still a work in progress
               </Typography>
             </Grid>
-            <Grid xs={3} container justify="space-evenly">
+            <Grid xs={3} item container justify="space-evenly">
               <a
                 className="github-button"
                 href="https://github.com/genesy/karabiner-complex-rules-generator"
