@@ -5,4 +5,5 @@ import IManipulator from './IManipulator';
 export default interface IRule {
   description: string;
   manipulators: IManipulator[];
+  _id?: string;
 }

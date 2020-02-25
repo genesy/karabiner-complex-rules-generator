@@ -13,4 +13,5 @@ export default interface IToEventDefinition {
   repeat?: Boolean;
   halt?: Boolean;
   hold_down_milliseconds?: Number;
+  _id?: string;
 }

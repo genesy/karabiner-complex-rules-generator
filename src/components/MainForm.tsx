@@ -17,6 +17,7 @@ import IRule from '../types/IRule';
 import IManipulator from '../types/IManipulator';
 import IFromEventDefinition from '../types/IFromEventDefinition';
 import { initialFromObject } from '../initialStates';
+import IToEventDefinition from '../types/IToEventDefinition';
 
 interface Props {}
 interface FormState {
@@ -41,6 +42,9 @@ const initialRule: IRule = {
 };
 
 const generateWithId = (obj: any = {}, prefix: string = '') => {
+  if (prefix.length) {
+    prefix += '_';
+  }
   return { ...obj, _id: _.uniqueId(prefix) };
 };
 
@@ -57,19 +61,26 @@ const parseJSONfirst = (text: string) => {
 
   // make sure from values have modifiers object
   parsedJSON.rules = parsedJSON.rules.map((rule: IRule) => {
-    const newRule: IRule = { ...rule };
-    newRule.manipulators.map((manipulator: IManipulator) => {
-      const newManipulator = { ...generateWithId(manipulator) };
+    const newRule: IRule = generateWithId(rule, 'rule');
+    newRule.manipulators = newRule.manipulators.map(
+      (manipulator: IManipulator) => {
+        const newManipulator = generateWithId(manipulator, 'manipulator');
+        toFields.forEach((toField: string) => {
+          if (newManipulator[toField]) {
+            newManipulator[toField] = [...manipulator[toField]];
+            newManipulator[toField] = newManipulator[toField].map(
+              (toObject: IToEventDefinition) => {
+                return generateWithId(toObject, toField);
+              },
+            );
+            console.log(newManipulator[toField]);
+          }
+        });
 
-      toFields.forEach((toField: string) => {
-        if (newManipulator[toField]) {
-          newManipulator[toField] = { ...newManipulator[toField] };
-        }
-      });
-
-      return newManipulator;
-    });
-    return { ...generateWithId(initialRule), ...newRule };
+        return newManipulator;
+      },
+    );
+    return newRule;
   });
 
   return parsedJSON;
@@ -126,12 +137,11 @@ const parseStateToMinimumJSON = (state: any) => {
   const parsedState = _.cloneDeep(state);
 
   parsedState.rules.forEach((rule: any, ruleIndex: number) => {
+    if (!rule.description.length) {
+      delete rule.description;
+    }
     rule.manipulators.forEach((manipulator: IManipulator) => {
       manipulator.from = parseFromObject(manipulator.from);
-
-      if (!manipulator.description) {
-        delete rule.description;
-      }
 
       if (_.isEmpty(manipulator.from)) {
         delete manipulator.from;
@@ -145,20 +155,24 @@ const parseStateToMinimumJSON = (state: any) => {
 const MainForm: React.FC<Props> = () => {
   const [formState, setFormState] = useState<FormState>({
     title: '',
-    rules: [generateWithId(initialRule)],
+    rules: [generateWithId(initialRule, 'rule')],
   });
 
-  const setRuleState = (rule: any = {}) => {
+  const setRuleState = (rule: IRule, newRule: IRule) => {
     const index = _.findIndex(formState.rules, { _id: rule._id });
+    // console.log(index);
     const newFormState = _.cloneDeep(formState);
-    const newRules = _.cloneDeep(formState.rules);
-    newRules[index] = { ...rule };
-    toFields.map(toField => {
-      if (newRules[index][toField]?.length === 0) {
-        delete newRules[index][toField];
-      }
-    });
-    newFormState.rules = newRules;
+    newFormState.rules[index] = { ...newFormState.rules[index], ...newRule };
+    // const newFormState = { ...formState }n;
+    // const newRules = {...formState, rules: [...formState.rules]}
+    // const newRules = _.cloneDeep(formState.rules);
+    // newRules[index] = { ...rule };
+    // toFields.map(toField => {
+    //   if (newRules[index][toField]?.length === 0) {
+    //     delete newRules[index][toField];
+    //   }
+    // });
+    // newFormState.rules = newRules;
     setFormState({ ...newFormState });
   };
 
@@ -174,7 +188,6 @@ const MainForm: React.FC<Props> = () => {
   const addRule = () => {
     setFormState({
       ...formState,
-      rules: [...formState.rules, generateWithId(initialRule)],
     });
   };
 
