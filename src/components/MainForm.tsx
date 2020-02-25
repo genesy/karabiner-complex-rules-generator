@@ -8,6 +8,7 @@ import {
   Box,
   ExpansionPanelSummary,
   ExpansionPanel,
+  Typography,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddIcon from '@material-ui/icons/Add';
@@ -18,6 +19,7 @@ import IManipulator from '../types/IManipulator';
 import IFromEventDefinition from '../types/IFromEventDefinition';
 import { initialFromObject } from '../initialStates';
 import IToEventDefinition from '../types/IToEventDefinition';
+import ISimultaneous from '../types/ISimultaneous';
 
 interface Props {}
 interface FormState {
@@ -36,9 +38,9 @@ const initialManipulator: IManipulator = {
   },
 };
 
-const getInitialRule = (length = 1): IRule => {
+const getInitialRule = (): IRule => {
   return {
-    ...generateWithId({ description: `Rule ${length}'s Description` }, 'rule'),
+    ...generateWithId({ description: '' }, 'rule'),
     manipulators: [generateWithId(initialManipulator, 'manipulator')],
   };
 };
@@ -133,8 +135,6 @@ const parseFromObject = (fromObject: IFromEventDefinition) => {
   return _from;
 };
 
-const parseToObject = (toObject: any) => {};
-
 const parseStateToMinimumJSON = (state: any) => {
   const parsedState = _.cloneDeep(state);
 
@@ -145,10 +145,29 @@ const parseStateToMinimumJSON = (state: any) => {
     rule.manipulators.forEach((manipulator: IManipulator) => {
       manipulator.from = parseFromObject(manipulator.from);
 
-      if (_.isEmpty(manipulator.from)) {
-        delete manipulator.from;
+      const newSimultaneous: ISimultaneous[] = [];
+      manipulator?.from?.simultaneous?.forEach(
+        (simultaneous: ISimultaneous) => {
+          delete simultaneous._id;
+          if (simultaneous?.key_code?.value) {
+            simultaneous.key_code = simultaneous.key_code.value;
+          }
+          if (!_.isEmpty(simultaneous)) {
+            newSimultaneous.push(simultaneous);
+          }
+        },
+      );
+      manipulator.from.simultaneous = newSimultaneous;
+
+      if (_.isEmpty(manipulator.from.simultaneous)) {
+        delete manipulator.from.simultaneous;
       }
+      // if (_.isEmpty(manipulator.from)) {
+      //   delete manipulator.from;
+      // }
+      delete manipulator._id;
     });
+    delete rule._id;
   });
 
   return parsedState;
@@ -172,7 +191,7 @@ const MainForm: React.FC<Props> = () => {
   const addRule = () => {
     const newFormState = { ...formState };
     newFormState.rules = newFormState.rules || [];
-    newFormState.rules.push(getInitialRule(newFormState.rules.length + 1));
+    newFormState.rules.push(getInitialRule());
     setFormState({ ...newFormState });
   };
 
@@ -222,13 +241,23 @@ const MainForm: React.FC<Props> = () => {
           </Box>
         </Grid>
         <Grid item xs container>
+          <Typography>Parsed JSON</Typography>
           <textarea
             className="generated-code"
             // value={JSON.stringify(formState, null, 2)}
             readOnly
             value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
           />
+          <Typography>Unparsed State</Typography>
           <textarea
+            className="generated-code"
+            value={JSON.stringify(formState, null, 2)}
+            readOnly
+            // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
+          />
+          <Typography>Test field to paste state</Typography>
+          <textarea
+            className="generated-code"
             onBlur={e => {
               try {
                 setFormState(parseJSONfirst(e.target.value));

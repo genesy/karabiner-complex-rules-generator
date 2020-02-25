@@ -6,9 +6,9 @@ body,
 }
 
 .generated-code {
-  height: 40%;
+  height: 30%;
   width: 100%;
-  font-size: large;
+  font-size: medium;
   font-family: 'Courier New', Courier, monospace;
 }
 

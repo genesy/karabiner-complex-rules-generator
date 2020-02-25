@@ -1,6 +1,7 @@
 export default interface ISimultaneous {
-  key_code?: string;
-  consumer_code?: string;
+  // TODO: add keycode label value type
+  key_code?: string | any;
+  consumer_code?: string | any;
   pointing_button?: string;
   _id?: string;
 }
