@@ -72,13 +72,12 @@ const parseJSONfirst = (text: string) => {
         const newManipulator = generateWithId(manipulator, 'manipulator');
         toFields.forEach((toField: string) => {
           if (newManipulator[toField]) {
-            newManipulator[toField] = [...manipulator[toField]];
+            // newManipulator[toField] = [...manipulator[toField]];
             newManipulator[toField] = newManipulator[toField].map(
               (toObject: IToEventDefinition) => {
                 return generateWithId(toObject, toField);
               },
             );
-            console.log(newManipulator[toField]);
           }
         });
 
@@ -90,7 +89,7 @@ const parseJSONfirst = (text: string) => {
 
   return parsedJSON;
 };
-const parseKey = (key: any) => key.value;
+const parseKey = (key: any) => (typeof key === 'string' ? key : key.value);
 
 const parseKeys = (modifiers: any[]) => {
   return modifiers.map(parseKey);
@@ -160,10 +159,11 @@ const parseStateToMinimumJSON = (state: any) => {
       );
 
       toFields.forEach(toField => {
+        console.log(toField, manipulator[toField]);
         if (!manipulator[toField]) return;
-        delete manipulator[toField]._id;
         manipulator[toField] = manipulator[toField].map(
           (toObject: IToEventDefinition) => {
+            delete toObject._id;
             if (toObject.key_code) {
               toObject.key_code = parseKey(toObject.key_code);
             }
@@ -255,37 +255,41 @@ const MainForm: React.FC<Props> = () => {
               </Button>
             </Box>
           </Grid>
-          <Grid item xs>
-            <Typography>Parsed JSON</Typography>
-            <textarea
-              className="generated-code"
-              // value={JSON.stringify(formState, null, 2)}
-              readOnly
-              value={JSON.stringify(
-                parseStateToMinimumJSON(formState),
-                null,
-                2,
-              )}
-            />
-            <Typography>Unparsed State</Typography>
-            <textarea
-              className="generated-code"
-              value={JSON.stringify(formState, null, 2)}
-              readOnly
-              // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
-            />
-            <textarea
-              placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
-              className="generated-code"
-              onBlur={e => {
-                try {
-                  if (e.target.value)
-                    setFormState(parseJSONfirst(e.target.value));
-                } catch (e) {
-                  console.log({ e });
-                }
-              }}
-            />
+          <Grid container xs item direction="column">
+            <Grid container item xs>
+              <textarea
+                className="generated-code"
+                // value={JSON.stringify(formState, null, 2)}
+                readOnly
+                value={JSON.stringify(
+                  parseStateToMinimumJSON(formState),
+                  null,
+                  2,
+                )}
+              />
+            </Grid>
+            {/* <Grid item xs>
+              <textarea
+                className="generated-code"
+                value={JSON.stringify(formState, null, 2)}
+                readOnly
+                // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
+              />
+            </Grid> */}
+            <Grid container item xs>
+              <textarea
+                placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
+                className="generated-code"
+                onBlur={e => {
+                  try {
+                    if (e.target.value)
+                      setFormState(parseJSONfirst(e.target.value));
+                  } catch (e) {
+                    console.log({ e });
+                  }
+                }}
+              />
+            </Grid>
           </Grid>
         </Grid>
       </Container>
