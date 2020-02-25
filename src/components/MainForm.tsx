@@ -9,6 +9,7 @@ import {
   ExpansionPanelSummary,
   ExpansionPanel,
   Typography,
+  Container,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddIcon from '@material-ui/icons/Add';
@@ -203,71 +204,77 @@ const MainForm: React.FC<Props> = () => {
         getRuleByIndex,
       }}
     >
-      <Grid container direction="row" justify="space-between">
-        <Grid item xs>
-          <Box p={1}>
-            <TextField
-              fullWidth
-              onChange={e =>
-                setFormState({ ...formState, title: e.currentTarget.value })
-              }
-              value={formState.title}
-              variant="filled"
-              label="Title"
-            />
-            {formState.rules.map((rule, index) => (
-              <ExpansionPanel defaultExpanded={index === 0} key={index}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  {index +
-                    1 +
-                    suffix(index + 1) +
-                    ' Rule' +
-                    (rule.description ? ': ' + rule.description : '')}
-                </ExpansionPanelSummary>
-                <Box p={1}>
-                  <RuleForm key={index} rule={rule} setRule={setRule} />
-                </Box>
-              </ExpansionPanel>
-            ))}
+      <Container>
+        <Grid container direction="row" justify="space-between">
+          <Grid item xs>
+            <Box p={1}>
+              <TextField
+                fullWidth
+                onChange={e =>
+                  setFormState({ ...formState, title: e.currentTarget.value })
+                }
+                value={formState.title}
+                variant="filled"
+                label="Title"
+              />
+              {formState.rules.map((rule, index) => (
+                <ExpansionPanel defaultExpanded={index === 0} key={index}>
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    {index +
+                      1 +
+                      suffix(index + 1) +
+                      ' Rule' +
+                      (rule.description ? ': ' + rule.description : '')}
+                  </ExpansionPanelSummary>
+                  <Box p={1}>
+                    <RuleForm key={index} rule={rule} setRule={setRule} />
+                  </Box>
+                </ExpansionPanel>
+              ))}
 
-            <Button
-              onClick={addRule}
-              color="primary"
-              variant="contained"
-              startIcon={<AddIcon />}
-            >
-              Rule
-            </Button>
-          </Box>
+              <Button
+                onClick={addRule}
+                color="primary"
+                variant="contained"
+                startIcon={<AddIcon />}
+              >
+                Rule
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item xs container>
+            <Typography>Parsed JSON</Typography>
+            <textarea
+              className="generated-code"
+              // value={JSON.stringify(formState, null, 2)}
+              readOnly
+              value={JSON.stringify(
+                parseStateToMinimumJSON(formState),
+                null,
+                2,
+              )}
+            />
+            <Typography>Unparsed State</Typography>
+            <textarea
+              className="generated-code"
+              value={JSON.stringify(formState, null, 2)}
+              readOnly
+              // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
+            />
+            <Typography>Test field to paste state</Typography>
+            <textarea
+              className="generated-code"
+              onBlur={e => {
+                try {
+                  setFormState(parseJSONfirst(e.target.value));
+                } catch (e) {
+                  console.log({ e });
+                }
+              }}
+            />
+          </Grid>
         </Grid>
-        <Grid item xs container>
-          <Typography>Parsed JSON</Typography>
-          <textarea
-            className="generated-code"
-            // value={JSON.stringify(formState, null, 2)}
-            readOnly
-            value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
-          />
-          <Typography>Unparsed State</Typography>
-          <textarea
-            className="generated-code"
-            value={JSON.stringify(formState, null, 2)}
-            readOnly
-            // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
-          />
-          <Typography>Test field to paste state</Typography>
-          <textarea
-            className="generated-code"
-            onBlur={e => {
-              try {
-                setFormState(parseJSONfirst(e.target.value));
-              } catch (e) {
-                console.log({ e });
-              }
-            }}
-          />
-        </Grid>
-      </Grid>
+      </Container>
     </FormContext.Provider>
   );
 };
