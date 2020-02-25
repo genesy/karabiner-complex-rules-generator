@@ -1,27 +1,27 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a920d4efc1eba4dae29fa17b68fa2b96",
+    "revision": "c624dadf6c47e5e29ccc86bafa43e3fe",
     "url": "/karabiner-complex-rules-generator/index.html"
   },
   {
-    "revision": "3241a1ecdf6183b4aad4",
+    "revision": "9967b8b21afb1a4e1f1a",
     "url": "/karabiner-complex-rules-generator/static/css/2.3c7f2c3d.chunk.css"
   },
   {
-    "revision": "30ca4b51326c95acefdd",
-    "url": "/karabiner-complex-rules-generator/static/css/main.6461c5b1.chunk.css"
+    "revision": "b4d15f0a169383b3d165",
+    "url": "/karabiner-complex-rules-generator/static/css/main.bdf36647.chunk.css"
   },
   {
-    "revision": "3241a1ecdf6183b4aad4",
-    "url": "/karabiner-complex-rules-generator/static/js/2.0292ace8.chunk.js"
+    "revision": "9967b8b21afb1a4e1f1a",
+    "url": "/karabiner-complex-rules-generator/static/js/2.0c021fb1.chunk.js"
   },
   {
-    "revision": "6f5f1c4a5f7f6e382b8aeca1b4ac8d96",
-    "url": "/karabiner-complex-rules-generator/static/js/2.0292ace8.chunk.js.LICENSE.txt"
+    "revision": "5d88fa79734dd7ea88fbef0b090463b0",
+    "url": "/karabiner-complex-rules-generator/static/js/2.0c021fb1.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "30ca4b51326c95acefdd",
-    "url": "/karabiner-complex-rules-generator/static/js/main.a3bb0639.chunk.js"
+    "revision": "b4d15f0a169383b3d165",
+    "url": "/karabiner-complex-rules-generator/static/js/main.defcedaf.chunk.js"
   },
   {
     "revision": "b30e42a2b07e0af2d945",
