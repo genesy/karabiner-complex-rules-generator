@@ -21,7 +21,7 @@ import _ from 'lodash';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import AppSelect from '../shared/AppSelect';
 import { useDispatch } from 'react-redux';
-import { setManipulator } from '../../ducks/formState';
+import { setManipulator, addToObject } from '../../ducks/formState';
 
 const toFields: string[] = [
   'to',
@@ -57,25 +57,29 @@ const ManipulatorForm: React.FC<Props> = ({
   index,
 }) => {
   const dispatch = useDispatch();
-  // add 'to event form'
-  const addToEventForm = (type: string) => {
-    // const newManipulator = { ...manipulator };
-    // newManipulator[type] = newManipulator[type] || [];
-    // newManipulator[type].push({ repeat: true, _id: _.uniqueId(type + '_') });
-    // setManipulator(newManipulator);
-  };
-  const addConditionToRule = () => {
-    // const newManipulator = { ...manipulator };
-    // newManipulator.conditions = newManipulator.conditions || [];
-    // newManipulator.conditions.push({
-    //   type: 'frontmost_application_if',
-    // });
-    // setManipulator(newManipulator);
+  const addToEventForm = (toField: string) => {
+    dispatch(addToObject({ manipulatorIndex: index, ruleIndex, toField }));
   };
 
-  const setFromObject = (newFromObject: IFromEventDefinition) => {
-    // const newManipulator = { ...manipulator, from: newFromObject };
-    // setManipulator(newManipulator);
+  const _setManipulator = (newManipulator: IManipulator) => {
+    dispatch(
+      setManipulator({
+        ruleIndex,
+        index,
+        manipulator: newManipulator,
+      }),
+    );
+  };
+
+  const addConditionToRule = () => {
+    const newManipulator = { ...manipulator };
+    newManipulator.conditions = newManipulator.conditions || [];
+    const newConditions = [
+      ...newManipulator.conditions,
+      { type: 'frontmost_application_if' },
+    ];
+    newManipulator.conditions = newConditions;
+    _setManipulator(newManipulator);
   };
 
   return useMemo(
@@ -109,12 +113,11 @@ const ManipulatorForm: React.FC<Props> = ({
           />
         </AppExpansionPanel>
 
-        {/* <ToEventFormsContainer
-
+        <ToEventFormsContainer
           manipulator={manipulator}
           ruleIndex={ruleIndex}
           manipulatorIndex={index}
-        /> */}
+        />
 
         {manipulator.conditions && (
           <AppExpansionPanel
@@ -153,6 +156,29 @@ const ManipulatorForm: React.FC<Props> = ({
                 </Button>
               );
             })}
+          </ButtonGroup>
+          <Typography>to_delayed_action</Typography>
+          <ButtonGroup>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => {
+                addToEventForm('to_if_invoked');
+              }}
+            >
+              Add to_if_invoked
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={() => {
+                addToEventForm('to_if_canceled');
+              }}
+            >
+              Add to_if_canceled
+            </Button>
           </ButtonGroup>
         </Box>
         <Box marginTop={1}>

@@ -233,7 +233,7 @@ const MainForm: React.FC<Props> = () => {
   return (
     <Container>
       <Grid container direction="row" justify="space-between">
-        <Grid item xs>
+        <Grid item xs={9}>
           {titleForm}
           <Box p={1}>
             {formState.rules.map((rule, index) => (
@@ -253,7 +253,7 @@ const MainForm: React.FC<Props> = () => {
           </Box>
         </Grid>
 
-        <Grid container xs item direction="column">
+        <Grid container xs={3} item direction="column">
           <Grid item xs>
             <textarea
               className="generated-code"

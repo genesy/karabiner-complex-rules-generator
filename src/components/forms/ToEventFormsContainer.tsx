@@ -7,6 +7,7 @@ import IManipulator from '../../types/IManipulator';
 import IToEventDefinition from '../../types/IToEventDefinition';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import { useDispatch } from 'react-redux';
+import { setManipulator } from '../../ducks/formState';
 
 const toFields: string[] = [
   'to',
@@ -17,21 +18,28 @@ const toFields: string[] = [
 
 interface Props {
   manipulator: IManipulator;
-  manipulatorIndex: string;
-  ruleIndex: string;
+  manipulatorIndex: number;
+  ruleIndex: number;
 }
 const ToEventFormsContainer: React.FC<Props> = ({
   manipulator,
   ruleIndex,
   manipulatorIndex,
 }) => {
-  const setManipulator = (a: any) => a;
   const dispatch = useDispatch();
+  const _setManipulator = (newManipulator: IManipulator) =>
+    dispatch(
+      setManipulator({
+        manipulator: newManipulator,
+        ruleIndex,
+        index: manipulatorIndex,
+      }),
+    );
   return (
     <Box>
       {toFields.map((toField: string, toFieldsIndex: number) => {
         return (
-          manipulator[toField] && (
+          !!manipulator[toField]?.length && (
             <AppExpansionPanel
               key={toFieldsIndex}
               panelProps={{ defaultExpanded: true }}
@@ -42,13 +50,17 @@ const ToEventFormsContainer: React.FC<Props> = ({
                   const toObject = { ...to };
                   const setToObject = (newToObject: IToEventDefinition) => {
                     const newManipulator = { ...manipulator };
-                    newManipulator[toField][index] = newToObject;
-                    setManipulator(newManipulator);
+                    const _toField = [...newManipulator[toField]];
+                    _toField[index] = newToObject;
+                    newManipulator[toField] = _toField;
+                    _setManipulator(newManipulator);
                   };
                   const removeToObject = () => {
                     const newManipulator = { ...manipulator };
-                    newManipulator[toField].splice(index, 1);
-                    setManipulator(newManipulator);
+                    const _toField = [...newManipulator[toField]];
+                    _toField.splice(index, 1);
+                    newManipulator[toField] = _toField;
+                    _setManipulator(newManipulator);
                   };
 
                   const toEventFormProps = {
@@ -73,6 +85,39 @@ const ToEventFormsContainer: React.FC<Props> = ({
           )
         );
       })}
+      {manipulator.to_delayed_action.to_if_canceled && (
+        <AppExpansionPanel title="to_if_canceled">
+          {manipulator.to_delayed_action.to_if_canceled.map(
+            (toObject: IToEventDefinition, index: number) => {
+              const setToObject = (newToObject: IToEventDefinition) => {
+                const newManipulator = { ...manipulator };
+                const _toField = [
+                  ...newManipulator.to_delayed_action.to_if_canceled,
+                ];
+                _toField[index] = newToObject;
+                newManipulator.to_delayed_action.to_if_canceled = _toField;
+                _setManipulator(newManipulator);
+              };
+              const removeToObject = () => {
+                const newManipulator = { ...manipulator };
+                const _toField = [
+                  ...newManipulator.to_delayed_action.to_if_canceled,
+                ];
+                _toField.splice(index, 1);
+                newManipulator.to_delayed_action.to_if_canceled = _toField;
+                _setManipulator(newManipulator);
+              };
+
+              const toEventFormProps = {
+                toObject,
+                setToObject,
+                removeToObject,
+              };
+              return <ToEventForm {...toEventFormProps} />;
+            },
+          )}
+        </AppExpansionPanel>
+      )}
     </Box>
   );
 };
