@@ -1,6 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
 import KeyCodeAndPointingButtonInput from '../shared/KeyCodeAndPointingButtonInput';
-import FormContext from '../../context/FormContext';
 import IToEventDefinition from '../../types/IToEventDefinition';
 import Modifier from '../../types/Modifier';
 import {

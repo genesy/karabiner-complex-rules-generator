@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, TextField, Button } from '@material-ui/core';
 
-import FormContext from '../../context/FormContext';
 import ManipulatorForm from './ManipulatorForm';
 import IManipulator from '../../types/IManipulator';
 import IRule from '../../types/IRule';
