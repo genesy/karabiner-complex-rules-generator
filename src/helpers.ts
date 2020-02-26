@@ -4,6 +4,10 @@ export const suffix = (n: number) => {
   return d > 3 && d < 21 ? 'th' : s[d % 10] || 'th';
 };
 
+export const withSuffix = (n: number) => {
+  return `${n}${suffix(n)}`;
+};
+
 export const titleCase = (string: string) => {
   var sentence = string.toLowerCase().split('_');
   for (var i = 0; i < sentence.length; i++) {

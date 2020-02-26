@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo } from 'react';
 import KeyCodeAndPointingButtonInput from '../shared/KeyCodeAndPointingButtonInput';
 import IToEventDefinition from '../../types/IToEventDefinition';
 import Modifier from '../../types/Modifier';
@@ -72,73 +73,76 @@ const ToEventForm: React.FC<Props> = ({
     //   [type]: toArray,
     // });
   }, [toObject, showOptional]);
-  return (
-    <Box className="form-container">
-      <KeyCodeAndPointingButtonInput
-        setEventObject={setToObject}
-        eventObject={toObject}
-      />
-      <KeyInput
-        freeSolo={false}
-        modifiers
-        value={toObject.modifiers}
-        label="Modifiers"
-        onChange={(_e: any, value: any) => {
-          console.log({ value });
-          setToObject({
-            ...toObject,
-            modifiers: value.map((v: any) =>
-              typeof v === 'string' ? { label: v, value: v } : v,
-            ),
-          });
-        }}
-      />
-      <FormControl fullWidth>
-        <FormLabel>Additional Options</FormLabel>
-        <FormControlLabel
-          label="Lazy"
-          control={
-            <Checkbox
-              checked={!!toObject.lazy}
-              onChange={e => {
-                setToObject({ ...toObject, lazy: e.target.checked });
-              }}
-            />
-          }
+  return useMemo(
+    () => (
+      <Box className="form-container">
+        <KeyCodeAndPointingButtonInput
+          setEventObject={setToObject}
+          eventObject={toObject}
         />
-        <FormControlLabel
-          label="Repeat"
-          control={
-            <Checkbox
-              checked={!!toObject.repeat}
-              onChange={e => {
-                setToObject({ ...toObject, repeat: e.target.checked });
-              }}
-            />
-          }
+        <KeyInput
+          freeSolo={false}
+          modifiers
+          value={toObject.modifiers}
+          label="Modifiers"
+          onChange={(_e: any, value: any) => {
+            console.log({ value });
+            setToObject({
+              ...toObject,
+              modifiers: value.map((v: any) =>
+                typeof v === 'string' ? { label: v, value: v } : v,
+              ),
+            });
+          }}
         />
-        <FormControlLabel
-          label="Halt"
-          control={
-            <Checkbox
-              checked={!!toObject.halt}
-              onChange={e => {
-                setToObject({ ...toObject, halt: e.target.checked });
-              }}
-            />
-          }
-        />
-      </FormControl>
+        <FormControl fullWidth>
+          <FormLabel>Additional Options</FormLabel>
+          <FormControlLabel
+            label="Lazy"
+            control={
+              <Checkbox
+                checked={!!toObject.lazy}
+                onChange={e => {
+                  setToObject({ ...toObject, lazy: e.target.checked });
+                }}
+              />
+            }
+          />
+          <FormControlLabel
+            label="Repeat"
+            control={
+              <Checkbox
+                checked={!!toObject.repeat}
+                onChange={e => {
+                  setToObject({ ...toObject, repeat: e.target.checked });
+                }}
+              />
+            }
+          />
+          <FormControlLabel
+            label="Halt"
+            control={
+              <Checkbox
+                checked={!!toObject.halt}
+                onChange={e => {
+                  setToObject({ ...toObject, halt: e.target.checked });
+                }}
+              />
+            }
+          />
+        </FormControl>
 
-      <Button
-        color="secondary"
-        variant="contained"
-        onClick={() => removeToObject()}
-        startIcon={<DeleteIcon />}
-      >
-        Remove
-      </Button>
-    </Box>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => removeToObject()}
+          startIcon={<DeleteIcon />}
+        >
+          Remove
+        </Button>
+      </Box>
+    ),
+    [toObject],
   );
 };
 

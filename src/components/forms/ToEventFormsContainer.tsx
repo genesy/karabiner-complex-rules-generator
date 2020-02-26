@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, ExpansionPanelSummary, ExpansionPanel } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 
 import { titleCase, suffix } from '../../helpers';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ToEventForm from './ToEventForm';
 import IManipulator from '../../types/IManipulator';
 import IToEventDefinition from '../../types/IToEventDefinition';
+import AppExpansionPanel from '../shared/AppExpansionPanel';
+import { useDispatch } from 'react-redux';
 
 const toFields: string[] = [
   'to',
@@ -16,56 +17,59 @@ const toFields: string[] = [
 
 interface Props {
   manipulator: IManipulator;
-  setManipulator: (arg0: IManipulator) => void;
+  manipulatorIndex: string;
+  ruleIndex: string;
 }
 const ToEventFormsContainer: React.FC<Props> = ({
   manipulator,
-  setManipulator,
+  ruleIndex,
+  manipulatorIndex,
 }) => {
+  const setManipulator = (a: any) => a;
+  const dispatch = useDispatch();
   return (
     <Box>
       {toFields.map((toField: string, toFieldsIndex: number) => {
         return (
           manipulator[toField] && (
-            <ExpansionPanel key={toFieldsIndex} defaultExpanded>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                "{titleCase(toField)}" Events
-              </ExpansionPanelSummary>
-              <Box p={2}>
-                {manipulator[toField].map(
-                  (to: IToEventDefinition, index: number) => {
-                    const toObject = { ...to };
-                    const setToObject = (newToObject: IToEventDefinition) => {
-                      const newManipulator = { ...manipulator };
-                      newManipulator[toField][index] = newToObject;
-                      setManipulator(newManipulator);
-                    };
-                    const removeToObject = () => {
-                      const newManipulator = { ...manipulator };
-                      newManipulator[toField].splice(index, 1);
-                      setManipulator(newManipulator);
-                    };
+            <AppExpansionPanel
+              key={toFieldsIndex}
+              panelProps={{ defaultExpanded: true }}
+              title={`"${titleCase(toField)}" Events`}
+            >
+              {manipulator[toField].map(
+                (to: IToEventDefinition, index: number) => {
+                  const toObject = { ...to };
+                  const setToObject = (newToObject: IToEventDefinition) => {
+                    const newManipulator = { ...manipulator };
+                    newManipulator[toField][index] = newToObject;
+                    setManipulator(newManipulator);
+                  };
+                  const removeToObject = () => {
+                    const newManipulator = { ...manipulator };
+                    newManipulator[toField].splice(index, 1);
+                    setManipulator(newManipulator);
+                  };
 
-                    const toEventFormProps = {
-                      toObject,
-                      setToObject,
-                      removeToObject,
-                    };
-                    return (
-                      <ExpansionPanel key={index} defaultExpanded={index === 0}>
-                        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                          {index + 1}
-                          {suffix(index + 1)} "{titleCase(toField)}" Event
-                        </ExpansionPanelSummary>
-                        <Box p={1}>
-                          <ToEventForm {...toEventFormProps} />
-                        </Box>
-                      </ExpansionPanel>
-                    );
-                  },
-                )}
-              </Box>
-            </ExpansionPanel>
+                  const toEventFormProps = {
+                    toObject,
+                    setToObject,
+                    removeToObject,
+                  };
+                  return (
+                    <AppExpansionPanel
+                      key={index}
+                      panelProps={{ defaultExpanded: index === 0 }}
+                      title={`${index + 1}${suffix(index + 1)} "${titleCase(
+                        toField,
+                      )}" Event`}
+                    >
+                      <ToEventForm {...toEventFormProps} />
+                    </AppExpansionPanel>
+                  );
+                },
+              )}
+            </AppExpansionPanel>
           )
         );
       })}

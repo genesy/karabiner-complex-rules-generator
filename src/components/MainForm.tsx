@@ -1,16 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import RuleForm from './forms/RuleForm';
-import FormContext from '../context/FormContext';
-import {
-  Grid,
-  Button,
-  TextField,
-  Box,
-  ExpansionPanelSummary,
-  ExpansionPanel,
-  Container,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Grid, Button, TextField, Box, Container } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { suffix, titleCase } from '../helpers';
 import _ from 'lodash';
@@ -20,31 +10,15 @@ import IFromEventDefinition from '../types/IFromEventDefinition';
 import { initialFromObject } from '../initialStates';
 import IToEventDefinition from '../types/IToEventDefinition';
 import ISimultaneous from '../types/ISimultaneous';
+import { useDispatch, useSelector } from 'react-redux';
+import { addRule, removeRule, setRule, setTitle } from '../ducks/formState';
+import IFormState from '../types/IFormState';
 
 interface Props {}
 interface FormState {
   title: string;
   rules: any[];
 }
-
-const initialManipulator: IManipulator = {
-  type: 'basic',
-  from: {
-    modifiers: {
-      mandatory: [],
-      optional: [],
-    },
-    simultaneous: [],
-  },
-};
-
-const getInitialRule = (): IRule => {
-  return {
-    ...generateWithId({ description: '' }, 'rule'),
-    manipulators: [generateWithId(initialManipulator, 'manipulator')],
-  };
-};
-
 const generateWithId = (obj: any = {}, prefix: string = '') => {
   if (prefix.length) {
     prefix += '_';
@@ -198,39 +172,38 @@ const parseStateToMinimumJSON = (state: any) => {
 };
 
 const MainForm: React.FC<Props> = () => {
-  let initialFormState = {
-    title: '',
-    rules: [getInitialRule()],
-  };
+  const formState = useSelector((state: IFormState) => state);
 
-  try {
-    initialFormState =
-      JSON.parse(
-        window.atob(
-          window.location.href.slice(window.location.href.indexOf('#') + 1),
-        ),
-      ) || initialFormState;
-  } catch (e) {}
+  const dispatch = useDispatch();
 
-  const [formState, setFormState] = useState<FormState>(initialFormState);
+  // try {
+  //   initialFormState =
+  //     JSON.parse(
+  //       window.atob(
+  //         window.location.href.slice(window.location.href.indexOf('#') + 1),
+  //       ),
+  //     ) || initialFormState;
+  // } catch (e) {}
+
+  // const [formState, setFormState] = useState<FormState>(initialFormState);
 
   const parsedState = parseStateToMinimumJSON(formState);
 
-  const setRule = (newRule: IRule) => {
-    const index = _.findIndex(formState.rules, { _id: newRule._id });
-    const newFormState = _.cloneDeep(formState);
-    newFormState.rules[index] = { ...newFormState.rules[index], ...newRule };
-    setFormState({ ...newFormState });
-  };
+  // const setRule = (newRule: IRule) => {
+  //   const index = _.findIndex(formState.rules, { _id: newRule._id });
+  //   const newFormState = _.cloneDeep(formState);
+  //   newFormState.rules[index] = { ...newFormState.rules[index], ...newRule };
+  //   setFormState({ ...newFormState });
+  // };
 
-  const getRuleByIndex = (index: number): any => formState.rules[index];
+  // const getRuleByIndex = (index: number): any => formState.rules[index];
 
-  const addRule = () => {
-    const newFormState = { ...formState };
-    newFormState.rules = newFormState.rules || [];
-    newFormState.rules.push(getInitialRule());
-    setFormState({ ...newFormState });
-  };
+  // const addRule = () => {
+  //   const newFormState = { ...formState };
+  //   newFormState.rules = newFormState.rules || [];
+  //   newFormState.rules.push(getInitialRule());
+  //   setFormState({ ...newFormState });
+  // };
 
   const install = () => {
     const base64string = window.btoa(JSON.stringify(parsedState));
@@ -243,68 +216,56 @@ const MainForm: React.FC<Props> = () => {
     alert('copy the url in your addess bar to share');
   };
 
+  const titleForm = useMemo(() => {
+    return (
+      <Box m={1}>
+        <TextField
+          fullWidth
+          onChange={e => dispatch(setTitle(e.target.value))}
+          value={formState.title}
+          variant="outlined"
+          label="Modification Title"
+        />
+      </Box>
+    );
+  }, [formState.title]);
   return (
-    <FormContext.Provider
-      value={{
-        formState,
-        setFormState,
-        getRuleByIndex,
-      }}
-    >
-      <Container>
-        <Grid container direction="row" justify="space-between">
-          <Grid item xs>
-            <Box p={1}>
-              <TextField
-                fullWidth
-                onChange={e =>
-                  setFormState({ ...formState, title: e.currentTarget.value })
-                }
-                value={formState.title}
-                variant="filled"
-                label="Title"
-              />
-              {formState.rules.map((rule, index) => (
-                <ExpansionPanel defaultExpanded={index === 0} key={index}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    {index +
-                      1 +
-                      suffix(index + 1) +
-                      ' Rule' +
-                      (rule.description ? ': ' + rule.description : '')}
-                  </ExpansionPanelSummary>
-                  <Box p={1}>
-                    <RuleForm key={index} rule={rule} setRule={setRule} />
-                  </Box>
-                </ExpansionPanel>
-              ))}
+    <Container>
+      <Grid container direction="row" justify="space-between">
+        <Grid item xs>
+          {titleForm}
+          <Box p={1}>
+            {formState.rules.map((rule, index) => (
+              <RuleForm index={index} key={index} rule={rule} />
+            ))}
 
-              <Button
-                onClick={addRule}
-                color="primary"
-                variant="contained"
-                startIcon={<AddIcon />}
-              >
-                Rule
-              </Button>
-            </Box>
+            <Button
+              onClick={() => dispatch(addRule())}
+              color="primary"
+              variant="contained"
+              startIcon={<AddIcon />}
+            >
+              Rule
+            </Button>
+          </Box>
+        </Grid>
+
+        <Grid container xs item direction="column">
+          <Grid item xs>
+            <textarea
+              className="generated-code"
+              value={JSON.stringify(formState, null, 2)}
+              readOnly
+              // value={JSON.stringify(parsedState, null, 2)}
+            />
+            <Button onClick={install} color="primary" variant="contained">
+              Install!
+            </Button>
+            <Button onClick={generateUrl} color="primary" variant="contained">
+              Get Shareable Copy of this Rule
+            </Button>
           </Grid>
-          <Grid container xs item direction="column">
-            <Grid item xs>
-              <textarea
-                className="generated-code"
-                // value={JSON.stringify(formState, null, 2)}
-                readOnly
-                value={JSON.stringify(parsedState, null, 2)}
-              />
-              <Button onClick={install} color="primary" variant="contained">
-                Install!
-              </Button>
-              <Button onClick={generateUrl} color="primary" variant="contained">
-                Get Shareable Copy of this Rule
-              </Button>
-            </Grid>
-            {/* <Grid item xs>
+          {/* <Grid item xs>
               <textarea
                 className="generated-code"
                 value={JSON.stringify(formState, null, 2)}
@@ -312,24 +273,23 @@ const MainForm: React.FC<Props> = () => {
                 // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
               />
             </Grid> */}
-            <Grid container item xs>
-              <textarea
-                placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
-                className="generated-code"
-                onBlur={e => {
-                  try {
-                    if (e.target.value)
-                      setFormState(parseJSONfirst(e.target.value));
-                  } catch (e) {
-                    console.log({ e });
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
+          {/* <Grid container item xs>
+            <textarea
+              placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
+              className="generated-code"
+              onBlur={e => {
+                try {
+                  if (e.target.value)
+                    setFormState(parseJSONfirst(e.target.value));
+                } catch (e) {
+                  console.log({ e });
+                }
+              }}
+            />
+          </Grid> */}
         </Grid>
-      </Container>
-    </FormContext.Provider>
+      </Grid>
+    </Container>
   );
 };
 export default MainForm;

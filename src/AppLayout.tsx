@@ -5,6 +5,7 @@ import {
   Typography,
   Toolbar,
   Grid,
+  Box,
 } from '@material-ui/core';
 
 import MainForm from './components/MainForm';
@@ -46,7 +47,9 @@ const AppLayout: React.FC<Props> = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <MainForm />
+      <Box marginTop={1}>
+        <MainForm />
+      </Box>
     </>
   );
 };

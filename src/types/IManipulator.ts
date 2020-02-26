@@ -17,4 +17,5 @@ export default interface IManipulator {
   };
   conditions?: ICondition[];
   parameters?: any;
+  _id?: string;
 }

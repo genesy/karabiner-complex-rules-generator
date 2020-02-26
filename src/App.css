@@ -6,10 +6,12 @@ body,
 }
 
 .generated-code {
-  height: 80%;
+  /* height: 80%; */
   width: 100%;
-  font-size: medium;
+  font-size: 12px;
+  background: #ddd;
   font-family: 'Courier New', Courier, monospace;
+  min-height: 400px;
 }
 
 .MuiExpansionPanel-root {

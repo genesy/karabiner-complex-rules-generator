@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Select,
   Box,
@@ -6,21 +6,22 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
-  ExpansionPanelSummary,
-  ExpansionPanel,
   Button,
   Typography,
 } from '@material-ui/core';
 
-import { titleCase } from '../../helpers';
+import { titleCase, withSuffix } from '../../helpers';
 import AddConditionForm from './AddConditionForm';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import IManipulator from '../../types/IManipulator';
 import ICondition from '../../types/ICondition';
 import FromEventForm from './FromEventForm';
 import IFromEventDefinition from '../../types/IFromEventDefinition';
 import ToEventFormsContainer from './ToEventFormsContainer';
 import _ from 'lodash';
+import AppExpansionPanel from '../shared/AppExpansionPanel';
+import AppSelect from '../shared/AppSelect';
+import { useDispatch } from 'react-redux';
+import { setManipulator } from '../../ducks/formState';
 
 const toFields: string[] = [
   'to',
@@ -46,69 +47,80 @@ const types: string[] = [
 
 interface Props {
   manipulator: IManipulator;
-  setManipulator: (arg0: IManipulator) => void;
+  index: number;
+  ruleIndex: number;
 }
 
-const ManipulatorForm: React.FC<Props> = ({ manipulator, setManipulator }) => {
+const ManipulatorForm: React.FC<Props> = ({
+  manipulator,
+  ruleIndex,
+  index,
+}) => {
+  const dispatch = useDispatch();
   // add 'to event form'
   const addToEventForm = (type: string) => {
-    const newManipulator = { ...manipulator };
-    newManipulator[type] = newManipulator[type] || [];
-    newManipulator[type].push({ repeat: true, _id: _.uniqueId(type + '_') });
-    setManipulator(newManipulator);
+    // const newManipulator = { ...manipulator };
+    // newManipulator[type] = newManipulator[type] || [];
+    // newManipulator[type].push({ repeat: true, _id: _.uniqueId(type + '_') });
+    // setManipulator(newManipulator);
   };
   const addConditionToRule = () => {
-    const newManipulator = { ...manipulator };
-    newManipulator.conditions = newManipulator.conditions || [];
-    newManipulator.conditions.push({
-      type: 'frontmost_application_if',
-    });
-    setManipulator(newManipulator);
+    // const newManipulator = { ...manipulator };
+    // newManipulator.conditions = newManipulator.conditions || [];
+    // newManipulator.conditions.push({
+    //   type: 'frontmost_application_if',
+    // });
+    // setManipulator(newManipulator);
   };
 
   const setFromObject = (newFromObject: IFromEventDefinition) => {
-    const newManipulator = { ...manipulator, from: newFromObject };
-    setManipulator(newManipulator);
+    // const newManipulator = { ...manipulator, from: newFromObject };
+    // setManipulator(newManipulator);
   };
 
-  return (
-    <div>
-      <FormControl variant="filled" fullWidth>
-        <InputLabel id="type">Type*</InputLabel>
-        <Select
-          labelId="type"
+  return useMemo(
+    () => (
+      <AppExpansionPanel
+        panelProps={{ defaultExpanded: true }}
+        title={`${withSuffix(index + 1)} Manipulator`}
+      >
+        <AppSelect
+          label="Type"
           value={manipulator.type}
+          options={types}
           onChange={(e: any) => {
-            setManipulator({ ...manipulator, type: e.target.value });
+            dispatch(
+              setManipulator({
+                manipulator: { ...manipulator, type: e.target.value },
+                index,
+                ruleIndex,
+              }),
+            );
           }}
-        >
-          {types.map(type => (
-            <MenuItem value={type} key={type}>
-              {titleCase(type)}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <ExpansionPanel defaultExpanded>
-        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-          "From" Event*
-        </ExpansionPanelSummary>
-        <FromEventForm
-          fromObject={manipulator.from}
-          setFromObject={setFromObject}
         />
-      </ExpansionPanel>
-      <ToEventFormsContainer
-        manipulator={manipulator}
-        setManipulator={setManipulator}
-      />
+        <AppExpansionPanel
+          panelProps={{ defaultExpanded: true }}
+          title={`"From" Event`}
+        >
+          <FromEventForm
+            fromObject={manipulator.from}
+            manipulatorIndex={index}
+            ruleIndex={ruleIndex}
+          />
+        </AppExpansionPanel>
 
-      {manipulator.conditions && (
-        <ExpansionPanel defaultExpanded>
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            Rule Conditions
-          </ExpansionPanelSummary>
-          <Box p={1}>
+        {/* <ToEventFormsContainer
+
+          manipulator={manipulator}
+          ruleIndex={ruleIndex}
+          manipulatorIndex={index}
+        /> */}
+
+        {manipulator.conditions && (
+          <AppExpansionPanel
+            panelProps={{ defaultExpanded: true }}
+            title="Rule Conditions"
+          >
             {manipulator.conditions.map(
               (condition: ICondition, index: number) => {
                 return (
@@ -120,42 +132,43 @@ const ManipulatorForm: React.FC<Props> = ({ manipulator, setManipulator }) => {
                 );
               },
             )}
-          </Box>
-        </ExpansionPanel>
-      )}
+          </AppExpansionPanel>
+        )}
 
-      <Box>
-        <Typography>Add "To" Events</Typography>
-        <ButtonGroup>
-          {toFields.map((toField: string) => {
-            return (
-              <Button
-                key={toField}
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  addToEventForm(toField);
-                }}
-                size="small"
-              >
-                {toField}
-              </Button>
-            );
-          })}
-        </ButtonGroup>
-      </Box>
-      <Box marginTop={1}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => {
-            addConditionToRule();
-          }}
-        >
-          Add Conditions
-        </Button>
-      </Box>
-    </div>
+        <Box>
+          <Typography>Add "To" Events</Typography>
+          <ButtonGroup>
+            {toFields.map((toField: string) => {
+              return (
+                <Button
+                  key={toField}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    addToEventForm(toField);
+                  }}
+                  size="small"
+                >
+                  {toField}
+                </Button>
+              );
+            })}
+          </ButtonGroup>
+        </Box>
+        <Box marginTop={1}>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => {
+              addConditionToRule();
+            }}
+          >
+            Add Conditions
+          </Button>
+        </Box>
+      </AppExpansionPanel>
+    ),
+    [manipulator],
   );
 };
 
