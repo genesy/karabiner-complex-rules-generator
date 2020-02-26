@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/karabiner-complex-rules-generator/precache-manifest.0e048d1058dbb7efdd4a4a6f49200c29.js"
+  "/karabiner-complex-rules-generator/precache-manifest.5cba75e457d232d6340b13dbd7ee196b.js"
 );
 
 self.addEventListener('message', (event) => {
