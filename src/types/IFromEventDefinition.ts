@@ -10,8 +10,8 @@ export default interface IFromEventDefinition {
   consumer_key_code?: string;
   pointing_button?: PointingButton;
   modifiers?: {
-    mandatory?: Modifier[];
-    optional?: Modifier[];
+    mandatory?: any[];
+    optional?: any[];
   };
   simultaneous?: ISimultaneous[];
   simultaneous_options?: {

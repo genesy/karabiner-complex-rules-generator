@@ -50,6 +50,9 @@ const ToEventForm: React.FC<Props> = ({
     if (!newToObject.modifiers?.length) {
       delete newToObject.modifiers;
     } else {
+      if (typeof newToObject.modifiers === 'string') {
+        newToObject.modifiers = [newToObject.modifiers];
+      }
       newToObject.modifiers = newToObject.modifiers.map(
         (m: Modifier) => m.value,
       );

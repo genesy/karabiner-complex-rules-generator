@@ -72,6 +72,9 @@ const parseJSONfirst = (text: string) => {
         const newManipulator = generateWithId(manipulator, 'manipulator');
         toFields.forEach((toField: string) => {
           if (newManipulator[toField]) {
+            if (_.isPlainObject(newManipulator[toField])) {
+              newManipulator[toField] = [newManipulator[toField]];
+            }
             // newManipulator[toField] = [...manipulator[toField]];
             newManipulator[toField] = newManipulator[toField].map(
               (toObject: IToEventDefinition) => {
@@ -108,9 +111,12 @@ const parseFromObject = (fromObject: IFromEventDefinition) => {
 
   if (_from.modifiers) {
     if (_from.modifiers.mandatory) {
-      if (_from.modifiers.mandatory.length === 0) {
+      if (_from.modifiers.mandatory?.length === 0) {
         delete _from.modifiers.mandatory;
       } else {
+        if (typeof _from.modifiers.mandatory === 'string') {
+          _from.modifiers.mandatory = [_from.modifiers.mandatory];
+        }
         _from.modifiers.mandatory = parseKeys(_from.modifiers.mandatory);
       }
     }
@@ -119,6 +125,9 @@ const parseFromObject = (fromObject: IFromEventDefinition) => {
       if (_from.modifiers.optional.length === 0) {
         delete _from.modifiers.optional;
       } else {
+        if (typeof _from.modifiers.optional === 'string') {
+          _from.modifiers.optional = [_from.modifiers.optional];
+        }
         _from.modifiers.optional = parseKeys(_from.modifiers.optional);
       }
     }
@@ -159,7 +168,6 @@ const parseStateToMinimumJSON = (state: any) => {
       );
 
       toFields.forEach(toField => {
-        console.log(toField, manipulator[toField]);
         if (!manipulator[toField]) return;
         manipulator[toField] = manipulator[toField].map(
           (toObject: IToEventDefinition) => {
@@ -168,7 +176,10 @@ const parseStateToMinimumJSON = (state: any) => {
               toObject.key_code = parseKey(toObject.key_code);
             }
             if (toObject.modifiers) {
-              toObject.modifiers = parseKeys(toObject.modifiers);
+              toObject.modifiers =
+                typeof toObject.modifiers === 'string'
+                  ? toObject.modifiers
+                  : parseKeys(toObject.modifiers);
             }
             return toObject;
           },

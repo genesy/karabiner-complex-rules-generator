@@ -42,7 +42,7 @@ const KeyInput: React.FC<Props> = ({
       freeSolo={freeSolo}
       options={options}
       getOptionLabel={(o: any) => (typeof o === 'object' ? o.label : o) || ''}
-      value={value}
+      value={typeof value === 'string' ? [value] : value}
       onChange={onChange}
       autoHighlight={autoHighlight}
       renderInput={params => (

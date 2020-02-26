@@ -77,7 +77,7 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
           </Select>
         </FormControl>
 
-        {!!condition.bundle_identifiers.length && (
+        {!!condition?.bundle_identifiers?.length && (
           <ExpansionPanel defaultExpanded>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               Bundle Identifiers
@@ -87,6 +87,7 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
               {condition.bundle_identifiers.map(
                 (identifier: string, bundleIndex: number) => (
                   <TextField
+                    key={bundleIndex}
                     value={identifier}
                     fullWidth
                     variant="filled"
@@ -100,7 +101,7 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
             </Box>
           </ExpansionPanel>
         )}
-        {!!condition.file_paths.length && (
+        {!!condition?.file_paths?.length && (
           <ExpansionPanel defaultExpanded>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
               File Paths
