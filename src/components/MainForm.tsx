@@ -139,7 +139,7 @@ const parseStateToMinimumJSON = (state: any) => {
   const parsedState = _.cloneDeep(state);
 
   parsedState.rules.forEach((rule: any, ruleIndex: number) => {
-    if (!rule.description.length) {
+    if (!rule?.description?.length) {
       delete rule.description;
     }
     rule.manipulators.forEach((manipulator: IManipulator) => {
@@ -193,6 +193,8 @@ const MainForm: React.FC<Props> = () => {
     rules: [getInitialRule()],
   });
 
+  const parsedState = parseStateToMinimumJSON(formState);
+
   const setRule = (newRule: IRule) => {
     const index = _.findIndex(formState.rules, { _id: newRule._id });
     const newFormState = _.cloneDeep(formState);
@@ -207,6 +209,12 @@ const MainForm: React.FC<Props> = () => {
     newFormState.rules = newFormState.rules || [];
     newFormState.rules.push(getInitialRule());
     setFormState({ ...newFormState });
+  };
+
+  const install = () => {
+    const base64string = window.btoa(JSON.stringify(parsedState));
+    let url = `karabiner://karabiner/assets/complex_modifications/import?url=data:application/json;charset=utf-8;base64,${base64string}`;
+    window.location.href = url;
   };
 
   return (
@@ -256,17 +264,21 @@ const MainForm: React.FC<Props> = () => {
             </Box>
           </Grid>
           <Grid container xs item direction="column">
-            <Grid container item xs>
+            <Grid item xs>
               <textarea
                 className="generated-code"
                 // value={JSON.stringify(formState, null, 2)}
                 readOnly
-                value={JSON.stringify(
-                  parseStateToMinimumJSON(formState),
-                  null,
-                  2,
-                )}
+                value={JSON.stringify(parsedState, null, 2)}
               />
+              <Button
+                onClick={install}
+                fullWidth
+                color="primary"
+                variant="contained"
+              >
+                Install!
+              </Button>
             </Grid>
             {/* <Grid item xs>
               <textarea
