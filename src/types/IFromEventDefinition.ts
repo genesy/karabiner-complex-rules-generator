@@ -5,6 +5,13 @@ import PointingButton from './PointingButton';
 import IToEventDefinition from './IToEventDefinition';
 import Modifier from './Modifier';
 
+interface ISimultaneousOptions {
+  detect_key_down_uninterruptedly?: Boolean;
+  key_down_order?: KeyOrder | unknown;
+  key_up_order?: KeyOrder | unknown;
+  key_up_when?: KeyUpWhen | unknown;
+  to_after_key_up?: IToEventDefinition[];
+}
 export default interface IFromEventDefinition {
   key_code?: string;
   consumer_key_code?: string;
@@ -14,11 +21,5 @@ export default interface IFromEventDefinition {
     optional?: any[];
   };
   simultaneous?: ISimultaneous[];
-  simultaneous_options?: {
-    detect_key_down_uninterruptedly?: Boolean;
-    key_down_order?: KeyOrder;
-    key_up_order?: KeyOrder;
-    key_up_when?: KeyUpWhen;
-    to_after_key_up?: IToEventDefinition;
-  };
+  simultaneous_options?: ISimultaneousOptions;
 }

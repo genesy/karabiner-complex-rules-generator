@@ -13,6 +13,9 @@ const initialManipulator: IManipulator = {
       optional: [],
     },
     simultaneous: [],
+    simultaneous_options: {
+      detect_key_down_uninterruptedly: false,
+    },
   },
 };
 
@@ -62,9 +65,8 @@ export const formStateReducer = (state = initialFormState, action: any) => {
         break;
       case ADD_MANIPULATOR:
         if (action.payload) {
-          const { rule } = action.payload;
-          const index = _.findIndex(draft.rules, { _id: rule._id });
-          draft.rules[index].manipulators.push({
+          const { ruleIndex } = action.payload;
+          draft.rules[ruleIndex].manipulators.push({
             ...initialManipulator,
             _id: _.uniqueId('manipulator_'),
           });
@@ -125,11 +127,11 @@ export const setRule = (index: number, rule: IRule) => {
   };
 };
 
-export const addManipulator = (rule: IRule) => {
+export const addManipulator = (ruleIndex: number) => {
   return {
     type: ADD_MANIPULATOR,
     payload: {
-      rule,
+      ruleIndex,
     },
   };
 };

@@ -18,6 +18,8 @@ import { titleCase, withSuffix } from '../../helpers';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import { useDispatch } from 'react-redux';
 import { setFromObject } from '../../ducks/formState';
+import ISimultaneous from '../../types/ISimultaneous';
+import ToEventForm from './ToEventForm';
 
 const optionalBoolean: string[] = ['none', 'true', 'false'];
 const keyOrder: string[] = ['none', 'insensitive', 'strict', 'strict_inverse'];
@@ -94,9 +96,9 @@ const FromEventForm: React.FC<Props> = ({
             const setSimultaneous = (newSimultaneousObject: any) => {
               const newFromObject = { ...fromObject };
               if (newFromObject?.simultaneous?.length) {
-                const x = [...newFromObject.simultaneous];
-                x[index] = simultaneous;
-                newFromObject.simultaneous = x;
+                const newSim = [...newFromObject.simultaneous];
+                newSim[index] = newSimultaneousObject;
+                newFromObject.simultaneous = newSim;
                 _setFromObject(newFromObject);
               }
             };
@@ -139,58 +141,124 @@ const FromEventForm: React.FC<Props> = ({
             </Button>
           </Box>
         </Box>
-        {!!fromObject?.simultaneous?.length && (
-          <Box>
-            <AppExpansionPanel title="Simultaneous Options">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={
-                      !!fromObject?.simultaneous_options
-                        ?.detect_key_down_uninterruptedly
-                    }
-                    onChange={() => {}}
-                  />
-                }
-                label="Detect Key Down Uninterruptedly"
-              />
-              <FormControl fullWidth variant="filled">
-                <InputLabel id="key_down_order">Key Down Order</InputLabel>
-                <Select labelId="key_down_order" value={keyOrder[0]}>
-                  {keyOrder.map(item => (
-                    <MenuItem value={item} key={item}>
-                      {titleCase(item)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth variant="filled">
-                <InputLabel id="key_up_order">Key Up Order</InputLabel>
-                <Select labelId="key_up_order" value={keyOrder[0]}>
-                  {keyOrder.map(item => (
-                    <MenuItem value={item} key={item}>
-                      {titleCase(item)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl fullWidth variant="filled">
-                <InputLabel id="key_up_when">Key Up When</InputLabel>
-                <Select labelId="key_up_when" value={keyUpWhen[0]}>
-                  {keyUpWhen.map(item => (
-                    <MenuItem value={item} key={item}>
-                      {titleCase(item)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+        <Box>
+          <AppExpansionPanel title="Simultaneous Options">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={
+                    !!fromObject?.simultaneous_options
+                      ?.detect_key_down_uninterruptedly
+                  }
+                  onChange={e => {
+                    _setFromObject({
+                      ...fromObject,
+                      simultaneous_options: {
+                        ...fromObject.simultaneous_options,
+                        detect_key_down_uninterruptedly: e.target.checked,
+                      },
+                    });
+                  }}
+                />
+              }
+              label="Detect Key Down Uninterruptedly"
+            />
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_down_order">Key Down Order</InputLabel>
+              <Select
+                labelId="key_down_order"
+                value={fromObject.simultaneous_options?.key_down_order}
+                onChange={e => {
+                  _setFromObject({
+                    ...fromObject,
+                    simultaneous_options: {
+                      ...fromObject.simultaneous_options,
+                      key_down_order: e.target.value,
+                    },
+                  });
+                }}
+              >
+                {keyOrder.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_up_order">Key Up Order</InputLabel>
+              <Select
+                labelId="key_up_order"
+                value={fromObject.simultaneous_options?.key_up_order}
+                onChange={e => {
+                  _setFromObject({
+                    ...fromObject,
+                    simultaneous_options: {
+                      ...fromObject.simultaneous_options,
+                      key_up_order: e.target.value,
+                    },
+                  });
+                }}
+              >
+                {keyOrder.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth variant="filled">
+              <InputLabel id="key_up_when">Key Up When</InputLabel>
+              <Select
+                labelId="key_up_when"
+                value={fromObject.simultaneous_options?.key_up_when}
+                onChange={e => {
+                  _setFromObject({
+                    ...fromObject,
+                    simultaneous_options: {
+                      ...fromObject.simultaneous_options,
+                      key_up_when: e.target.value,
+                    },
+                  });
+                }}
+              >
+                {keyUpWhen.map(item => (
+                  <MenuItem value={item} key={item}>
+                    {titleCase(item)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              <Button color="primary" variant="contained">
+            <Box mt={1}>
+              {fromObject.simultaneous_options?.to_after_key_up?.map(
+                toEvent => {
+                  return 'not yet done';
+                },
+              )}
+              <Button
+                color="default"
+                variant="contained"
+                fullWidth
+                onClick={() => {
+                  const newFromObject: IFromEventDefinition = { ...fromObject };
+                  const simOpts: any = {
+                    ...newFromObject.simultaneous_options,
+                  };
+                  const toAfterKeyUp = simOpts.to_after_key_up
+                    ? [...simOpts.to_after_key_up]
+                    : [];
+                  toAfterKeyUp.push({});
+                  simOpts.to_after_key_up = toAfterKeyUp;
+                  newFromObject.simultaneous_options = simOpts;
+                  _setFromObject(newFromObject);
+                }}
+              >
                 Add to_after_key_up event
               </Button>
-            </AppExpansionPanel>
-          </Box>
-        )}
+            </Box>
+          </AppExpansionPanel>
+        </Box>
       </Box>
     ),
     [fromObject],

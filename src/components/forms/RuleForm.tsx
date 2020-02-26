@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { withSuffix } from '../../helpers';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import { useDispatch } from 'react-redux';
-import { removeRule, setRule } from '../../ducks/formState';
+import { removeRule, setRule, addManipulator } from '../../ducks/formState';
 
 interface Props {
   rule: IRule;
@@ -47,7 +47,7 @@ const RuleForm: React.FC<Props> = ({ rule, index }) => {
               return (
                 <ManipulatorForm
                   manipulator={manipulator}
-                  key={index}
+                  key={manipulatorIndex}
                   index={manipulatorIndex}
                   ruleIndex={index}
                 />
@@ -56,14 +56,18 @@ const RuleForm: React.FC<Props> = ({ rule, index }) => {
           )}
         </Box>
 
-        <Button>Add Manipulator</Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => dispatch(removeRule(index))}
-        >
-          Delete Rule! cannot be undone
-        </Button>
+        <Box mt={2}>
+          <Button onClick={() => dispatch(addManipulator(index))}>
+            Add Manipulator
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => dispatch(removeRule(index))}
+          >
+            Delete Rule! cannot be undone
+          </Button>
+        </Box>
       </AppExpansionPanel>
     ),
     [rule],

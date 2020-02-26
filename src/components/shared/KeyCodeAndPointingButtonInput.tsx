@@ -132,7 +132,6 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
                 autoHighlight={false}
                 label="Key Code (optional)"
                 onChange={(_e: any, v: any) => {
-                  console.log(' w');
                   setEventObject({
                     ...eventObject,
                     key_code:

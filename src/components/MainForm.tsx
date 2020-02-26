@@ -65,7 +65,8 @@ const parseJSONfirst = (text: string) => {
 
   return parsedJSON;
 };
-const parseKey = (key: any) => (typeof key === 'string' ? key : key.value);
+const parseKey = (key: any) =>
+  typeof key === 'string' ? key : key?.value || '';
 
 const parseKeys = (modifiers: any[]) => {
   return modifiers.map(parseKey);
@@ -238,15 +239,17 @@ const MainForm: React.FC<Props> = () => {
             {formState.rules.map((rule, index) => (
               <RuleForm index={index} key={index} rule={rule} />
             ))}
-
-            <Button
-              onClick={() => dispatch(addRule())}
-              color="primary"
-              variant="contained"
-              startIcon={<AddIcon />}
-            >
-              Rule
-            </Button>
+            <Box mt={2}>
+              <Button
+                onClick={() => dispatch(addRule())}
+                fullWidth
+                color="primary"
+                variant="contained"
+                startIcon={<AddIcon />}
+              >
+                Rule
+              </Button>
+            </Box>
           </Box>
         </Grid>
 

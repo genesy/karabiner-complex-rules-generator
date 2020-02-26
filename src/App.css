@@ -12,6 +12,7 @@ body,
   background: #ddd;
   font-family: 'Courier New', Courier, monospace;
   min-height: 400px;
+  position: fixed;
 }
 
 .MuiExpansionPanel-root {
