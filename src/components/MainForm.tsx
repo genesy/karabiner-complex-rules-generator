@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import RuleForm from './forms/RuleForm';
 import FormContext from '../context/FormContext';
 import {
@@ -8,7 +8,6 @@ import {
   Box,
   ExpansionPanelSummary,
   ExpansionPanel,
-  Typography,
   Container,
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -199,10 +198,21 @@ const parseStateToMinimumJSON = (state: any) => {
 };
 
 const MainForm: React.FC<Props> = () => {
-  const [formState, setFormState] = useState<FormState>({
+  let initialFormState = {
     title: '',
     rules: [getInitialRule()],
-  });
+  };
+
+  try {
+    initialFormState =
+      JSON.parse(
+        window.atob(
+          window.location.href.slice(window.location.href.indexOf('#') + 1),
+        ),
+      ) || initialFormState;
+  } catch (e) {}
+
+  const [formState, setFormState] = useState<FormState>(initialFormState);
 
   const parsedState = parseStateToMinimumJSON(formState);
 
@@ -226,6 +236,11 @@ const MainForm: React.FC<Props> = () => {
     const base64string = window.btoa(JSON.stringify(parsedState));
     let url = `karabiner://karabiner/assets/complex_modifications/import?url=data:application/json;charset=utf-8;base64,${base64string}`;
     window.location.href = url;
+  };
+  const generateUrl = () => {
+    const base64string = window.btoa(JSON.stringify(parsedState));
+    window.history.replaceState(undefined, '', '#' + base64string);
+    alert('copy the url in your addess bar to share');
   };
 
   return (
@@ -282,13 +297,11 @@ const MainForm: React.FC<Props> = () => {
                 readOnly
                 value={JSON.stringify(parsedState, null, 2)}
               />
-              <Button
-                onClick={install}
-                fullWidth
-                color="primary"
-                variant="contained"
-              >
+              <Button onClick={install} color="primary" variant="contained">
                 Install!
+              </Button>
+              <Button onClick={generateUrl} color="primary" variant="contained">
+                Get Shareable Copy of this Rule
               </Button>
             </Grid>
             {/* <Grid item xs>
