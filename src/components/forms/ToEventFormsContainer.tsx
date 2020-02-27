@@ -97,32 +97,50 @@ const ToEventFormsContainer: React.FC<Props> = ({
   const addToEventForm = (toField: string) => {
     dispatch(addToObject({ manipulatorIndex, ruleIndex, toField }));
   };
+  const totalDelayedAction =
+    (manipulator?.to_delayed_action?.to_if_canceled?.length || 0) +
+    (manipulator?.to_delayed_action?.to_if_invoked?.length || 0);
   return (
     <Box>
       {toFields.map((toField: string, toFieldsIndex: number) => {
         return (
-          <Box mb={2}>
-            <AppExpansionPanel
-              key={toFieldsIndex}
-              title={`${manipulator[toField].length} "${titleCase(
-                toField,
-              )}" Events`}
-            >
-              {manipulator[toField].map(
-                (to: IToEventDefinition, index: number) => {
-                  return (
-                    <TheForm
-                      to={to}
-                      index={index}
-                      toField={toField}
-                      key={index}
-                      ruleIndex={ruleIndex}
-                      manipulatorIndex={manipulatorIndex}
-                      manipulator={manipulator}
-                    />
-                  );
-                },
-              )}
+          <Box mb={2} key={toField}>
+            {manipulator[toField]?.length ? (
+              <AppExpansionPanel
+                key={toFieldsIndex}
+                title={`${manipulator[toField].length} "${titleCase(
+                  toField,
+                )}" Events`}
+              >
+                {manipulator[toField].map(
+                  (to: IToEventDefinition, index: number) => {
+                    return (
+                      <TheForm
+                        to={to}
+                        index={index}
+                        toField={toField}
+                        key={index}
+                        ruleIndex={ruleIndex}
+                        manipulatorIndex={manipulatorIndex}
+                        manipulator={manipulator}
+                      />
+                    );
+                  },
+                )}
+                <Box mt={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      addToEventForm(toField);
+                    }}
+                    fullWidth
+                  >
+                    add {toField} event
+                  </Button>
+                </Box>
+              </AppExpansionPanel>
+            ) : (
               <Box mt={2}>
                 <Button
                   variant="contained"
@@ -135,52 +153,67 @@ const ToEventFormsContainer: React.FC<Props> = ({
                   add {toField} event
                 </Button>
               </Box>
-            </AppExpansionPanel>
+            )}
           </Box>
         );
       })}
 
       <AppExpansionPanel
-        title={`${manipulator.to_delayed_action.to_if_canceled.length +
-          manipulator.to_delayed_action.to_if_invoked
-            .length} "To Delayed Action" Events`}
+        title={`${totalDelayedAction} "To Delayed Action" Events`}
       >
         {toDelayedAction.map((toField: string) => {
           return (
-            <AppExpansionPanel
-              key={toField}
-              title={`${
-                manipulator.to_delayed_action[toField].length
-              } "${titleCase(toField)}" Events`}
-            >
-              {manipulator.to_delayed_action[toField].map(
-                (to: IToEventDefinition, index: number) => {
-                  return (
-                    <TheForm
-                      to={to}
-                      index={index}
-                      toField={toField}
-                      key={index}
-                      ruleIndex={ruleIndex}
-                      manipulatorIndex={manipulatorIndex}
-                      manipulator={manipulator}
-                    />
-                  );
-                },
-              )}
-              <Box mt={2}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => {
-                    addToEventForm(toField);
-                  }}
+            <Box key={toField}>
+              {manipulator?.to_delayed_action?.[toField]?.length ? (
+                <AppExpansionPanel
+                  key={toField}
+                  title={`${
+                    manipulator.to_delayed_action[toField].length
+                  } "${titleCase(toField)}" Events`}
                 >
-                  Add {toField} Event
-                </Button>
-              </Box>
-            </AppExpansionPanel>
+                  {manipulator.to_delayed_action[toField].map(
+                    (to: IToEventDefinition, index: number) => {
+                      return (
+                        <TheForm
+                          to={to}
+                          index={index}
+                          toField={toField}
+                          key={index}
+                          ruleIndex={ruleIndex}
+                          manipulatorIndex={manipulatorIndex}
+                          manipulator={manipulator}
+                        />
+                      );
+                    },
+                  )}
+                  <Box mt={2}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      onClick={() => {
+                        addToEventForm(toField);
+                      }}
+                    >
+                      Add {toField} Event
+                    </Button>
+                  </Box>
+                </AppExpansionPanel>
+              ) : (
+                <Box mb={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => {
+                      addToEventForm(toField);
+                    }}
+                  >
+                    Add {toField} Event
+                  </Button>
+                </Box>
+              )}
+            </Box>
           );
         })}
       </AppExpansionPanel>

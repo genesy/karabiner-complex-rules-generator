@@ -117,7 +117,7 @@ const ManipulatorForm: React.FC<Props> = ({
           manipulatorIndex={index}
         />
 
-        {!!manipulator.conditions.length && (
+        {!!manipulator.conditions?.length && (
           <AppExpansionPanel
             panelProps={{ defaultExpanded: true }}
             title="Rule Conditions"

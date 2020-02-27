@@ -47,32 +47,17 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
   eventObject = {},
   setEventObject = obj => {},
 }) => {
-  // const [state, setState] = useState(eventObject);
-
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
     consumerKeyCode: false,
   });
 
   useEffect(() => {
-    const _eventObject = { ...eventObject };
-    if (showOptional.keyCode) {
-      delete _eventObject.consumer_key_code;
-    }
-    if (showOptional.consumerKeyCode) {
-      delete _eventObject.key_code;
-    }
-    if (!showOptional.keyCode && !showOptional.consumerKeyCode) {
-      delete _eventObject.key_code;
-      delete _eventObject.consumer_key_code;
-    }
-  }, [showOptional]);
-
-  useEffect(() => {
     const newOptional = {
       keyCode: !!eventObject.key_code,
       consumerKeyCode: !!eventObject.consumer_key_code,
     };
+    console.log(eventObject.key_code);
     setShowOptional(newOptional);
   }, [eventObject.consumer_key_code, eventObject.key_code]);
 

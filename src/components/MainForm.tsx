@@ -1,17 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import RuleForm from './forms/RuleForm';
-import { Grid, Button, TextField, Box, Container } from '@material-ui/core';
+import {
+  Grid,
+  Button,
+  TextField,
+  Box,
+  Container,
+  ButtonGroup,
+  Typography,
+} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { suffix, titleCase } from '../helpers';
 import _ from 'lodash';
 import IRule from '../types/IRule';
 import IManipulator from '../types/IManipulator';
 import IFromEventDefinition from '../types/IFromEventDefinition';
 import IToEventDefinition from '../types/IToEventDefinition';
-import ISimultaneous from '../types/ISimultaneous';
 import { useDispatch, useSelector } from 'react-redux';
-import { addRule, removeRule, setRule, setTitle } from '../ducks/formState';
+import { addRule, setTitle, setWholeState } from '../ducks/formState';
 import IFormState from '../types/IFormState';
+import { ALL_KEYS } from '../constants';
 
 interface Props {}
 interface FormState {
@@ -26,128 +33,176 @@ const toFields: string[] = [
   'to_after_key_up',
 ];
 
-const parseJSONfirst = (text: string) => {
-  let parsedJSON = JSON.parse(text);
-
-  // make sure from values have modifiers object
-  parsedJSON.rules = parsedJSON.rules.map((rule: IRule) => {
-    const newRule = { ...rule };
-    newRule.manipulators = newRule.manipulators.map(
-      (manipulator: IManipulator) => {
-        const newManipulator = { ...manipulator };
-        toFields.forEach((toField: string) => {
-          if (newManipulator[toField]) {
-            if (_.isPlainObject(newManipulator[toField])) {
-              newManipulator[toField] = [newManipulator[toField]];
-            }
-            // newManipulator[toField] = [...manipulator[toField]];
-            // newManipulator[toField] = newManipulator[toField].map(
-            //   (toObject: IToEventDefinition) => {
-            //     return {...}
-            //   },
-            // );
-          }
-        });
-
-        return newManipulator;
-      },
-    );
-    return newRule;
+const parseJSONfirst = (text: any) => {
+  let parsedJSON;
+  if (typeof text === 'string') {
+    parsedJSON = JSON.parse(text);
+  } else if (typeof text === 'object') {
+    parsedJSON = { ...text };
+  }
+  parsedJSON.rules = parsedJSON.rules.map((rule: any) => {
+    rule.description = rule.description || '';
+    rule.manipulators = rule.manipulators || [];
+    rule.manipulators = rule.manipulators.map((manipulator: any) => {
+      manipulator.type = manipulator.type || 'basic';
+      manipulator.from = manipulator.from || {
+        modifiers: {
+          mandatory: [],
+          optional: [],
+        },
+        simultaneous: [],
+        simultaneous_options: {
+          detect_key_down_uninterruptedly: false,
+          to_after_key_up: [],
+        },
+      };
+      if (typeof manipulator.from.key_code === 'string') {
+        const kc = manipulator.from.key_code;
+        manipulator.from.key_code = _.find(ALL_KEYS, { value: kc }) || {
+          label: kc,
+          value: kc,
+        };
+      }
+      manipulator.conditions = manipulator.conditions || [];
+      manipulator.to = manipulator.to || [];
+      manipulator.to_after_key_up = manipulator.to_after_key_up || [];
+      manipulator.to_if_alone = manipulator.to_if_alone || [];
+      manipulator.to_if_held_down = manipulator.to_if_held_down || [];
+      manipulator.to_delayed_action = manipulator.to_delayed_action || {
+        to_if_invoked: [],
+        to_if_canceled: [],
+      };
+      return manipulator;
+    });
+    return rule;
   });
 
   return parsedJSON;
 };
 const parseKey = (key: any) =>
-  typeof key === 'string' ? key : key?.value || '';
+  typeof key === 'string' ? key : key.value || '';
 
 const parseKeys = (modifiers: any[]) => {
   return modifiers.map(parseKey);
 };
 
-const parseFromObject = (fromObject: IFromEventDefinition) => {
-  return fromObject;
-  // const _from: any = Object.assign({}, initialFromObject, fromObject);
-  // if (typeof _from.key_code === 'object') {
-  //   _from.key_code = parseKey(_from.key_code);
-  // }
-  // if (_from.modifiers) {
-  //   if (_from.modifiers.mandatory) {
-  //     if (_from.modifiers.mandatory?.length === 0) {
-  //       delete _from.modifiers.mandatory;
-  //     } else {
-  //       if (typeof _from.modifiers.mandatory === 'string') {
-  //         _from.modifiers.mandatory = [_from.modifiers.mandatory];
-  //       }
-  //       _from.modifiers.mandatory = parseKeys(_from.modifiers.mandatory);
-  //     }
-  //   }
-  //   if (_from.modifiers.optional) {
-  //     if (_from.modifiers.optional.length === 0) {
-  //       delete _from.modifiers.optional;
-  //     } else {
-  //       if (typeof _from.modifiers.optional === 'string') {
-  //         _from.modifiers.optional = [_from.modifiers.optional];
-  //       }
-  //       _from.modifiers.optional = parseKeys(_from.modifiers.optional);
-  //     }
-  //   }
-  // }
-  // if (!_from.pointing_button || _from.pointing_button === 'disabled') {
-  //   delete _from.pointing_button;
-  // }
-  // if (_.isEmpty(_from.modifiers)) {
-  //   delete _from.modifiers;
-  // }
-  // return _from;
+const parseFromObject = (fromObject: IFromEventDefinition): any => {
+  const _from = { ...fromObject };
+  if (_.isEmpty(_from)) {
+    return;
+  }
+
+  if (typeof _from.key_code === 'object') {
+    _from.key_code = parseKey(_from.key_code);
+  }
+  if (_from.modifiers) {
+    if (_from.modifiers.mandatory) {
+      if (_from.modifiers.mandatory?.length === 0) {
+        delete _from.modifiers.mandatory;
+      } else {
+        if (typeof _from.modifiers.mandatory === 'string') {
+          _from.modifiers.mandatory = [_from.modifiers.mandatory];
+        }
+        _from.modifiers.mandatory = parseKeys(_from.modifiers.mandatory);
+      }
+    }
+    if (_from.modifiers.optional) {
+      if (_from.modifiers.optional.length === 0) {
+        delete _from.modifiers.optional;
+      } else {
+        if (typeof _from.modifiers.optional === 'string') {
+          _from.modifiers.optional = [_from.modifiers.optional];
+        }
+        _from.modifiers.optional = parseKeys(_from.modifiers.optional);
+      }
+    }
+  }
+
+  if (_from?.simultaneous_options?.to_after_key_up?.length === 0) {
+    delete _from.simultaneous_options.to_after_key_up;
+  }
+  if (_from?.simultaneous?.length === 0) {
+    delete _from.simultaneous;
+  }
+  if (_from?.simultaneous?.length) {
+    _from.simultaneous = _from.simultaneous.map(sim => {
+      if (sim.key_code) {
+        sim.key_code = parseKey(sim.key_code);
+      }
+      return sim;
+    });
+  }
+
+  if (
+    _.isEqual(_from.simultaneous_options, {
+      detect_key_down_uninterruptedly: false,
+    })
+  ) {
+    delete _from.simultaneous_options;
+  }
+  if (!_from.pointing_button || _from.pointing_button === 'disabled') {
+    delete _from.pointing_button;
+  }
+  if (_.isEmpty(_from.modifiers)) {
+    delete _from.modifiers;
+  }
+  return _from;
+};
+
+const parseToObject = (toObject: IToEventDefinition): any => {
+  const _to = { ...toObject };
+  if (typeof _to.key_code === 'object') {
+    _to.key_code = parseKey(toObject.key_code);
+  }
+  if (_to.modifiers?.length) {
+    _to.modifiers = parseKeys(_to.modifiers);
+  }
+  return _to;
+};
+
+const parseRuleObject = (rule: IRule): any => {
+  const _rule = { ...rule };
+  if (!rule?.description?.length) {
+    delete rule.description;
+  }
+  rule.manipulators = rule.manipulators.map((manipulator: IManipulator) => {
+    manipulator.from = parseFromObject(manipulator.from);
+    toFields.forEach(toField => {
+      if (!manipulator[toField]) return;
+      if (manipulator[toField]?.length === 0) {
+        delete manipulator[toField];
+        return;
+      }
+      manipulator[toField] = manipulator[toField].map(
+        (toObject: IToEventDefinition) => {
+          return parseToObject(toObject);
+        },
+      );
+    });
+
+    if (manipulator?.to_delayed_action?.to_if_invoked?.length === 0) {
+      delete manipulator.to_delayed_action.to_if_invoked;
+    }
+    if (manipulator?.to_delayed_action?.to_if_canceled?.length === 0) {
+      delete manipulator.to_delayed_action.to_if_canceled;
+    }
+    if (_.isEmpty(manipulator?.to_delayed_action)) {
+      delete manipulator.to_delayed_action;
+    }
+
+    if (manipulator?.conditions?.length === 0) {
+      delete manipulator.conditions;
+    }
+    return manipulator;
+  });
+  return _rule;
 };
 
 const parseStateToMinimumJSON = (state: any) => {
   const parsedState = _.cloneDeep(state);
-
-  parsedState.rules.forEach((rule: any, ruleIndex: number) => {
-    if (!rule?.description?.length) {
-      delete rule.description;
-    }
-    rule.manipulators.forEach((manipulator: IManipulator) => {
-      manipulator.from = parseFromObject(manipulator.from);
-
-      const newSimultaneous: ISimultaneous[] = [];
-      manipulator?.from?.simultaneous?.forEach(
-        (simultaneous: ISimultaneous) => {
-          if (simultaneous?.key_code?.value) {
-            simultaneous.key_code = simultaneous.key_code.value;
-          }
-          if (!_.isEmpty(simultaneous)) {
-            newSimultaneous.push(simultaneous);
-          }
-        },
-      );
-
-      toFields.forEach(toField => {
-        if (!manipulator[toField]) return;
-        manipulator[toField] = manipulator[toField].map(
-          (toObject: IToEventDefinition) => {
-            if (toObject.key_code) {
-              toObject.key_code = parseKey(toObject.key_code);
-            }
-            if (toObject.modifiers) {
-              toObject.modifiers =
-                typeof toObject.modifiers === 'string'
-                  ? toObject.modifiers
-                  : parseKeys(toObject.modifiers);
-            }
-            return toObject;
-          },
-        );
-      });
-      manipulator.from.simultaneous = newSimultaneous;
-
-      if (_.isEmpty(manipulator.from.simultaneous)) {
-        delete manipulator.from.simultaneous;
-      }
-    });
+  parsedState.rules = parsedState.rules.map((rule: IRule) => {
+    return parseRuleObject(rule);
   });
-
   return parsedState;
 };
 
@@ -156,16 +211,16 @@ const MainForm: React.FC<Props> = () => {
 
   const dispatch = useDispatch();
 
-  // try {
-  //   initialFormState =
-  //     JSON.parse(
-  //       window.atob(
-  //         window.location.href.slice(window.location.href.indexOf('#') + 1),
-  //       ),
-  //     ) || initialFormState;
-  // } catch (e) {}
-
-  // const [formState, setFormState] = useState<FormState>(initialFormState);
+  useEffect(() => {
+    try {
+      const state = JSON.parse(
+        window.atob(
+          window.location.href.slice(window.location.href.indexOf('#') + 1),
+        ),
+      );
+      dispatch(setWholeState(parseJSONfirst(state)));
+    } catch (e) {}
+  }, []);
 
   const parsedState = parseStateToMinimumJSON(formState);
 
@@ -194,9 +249,9 @@ const MainForm: React.FC<Props> = () => {
     );
   }, [formState.title]);
   return (
-    <Container>
+    <Container className="app-container">
       <Grid container direction="row" justify="space-between">
-        <Grid item xs={8}>
+        <Grid item xs={8} className="form-wrapper">
           {titleForm}
           <Box p={1}>
             {formState.rules.map((rule, index) => (
@@ -217,42 +272,42 @@ const MainForm: React.FC<Props> = () => {
         </Grid>
 
         <Grid container xs={4} item direction="column">
-          <Grid item xs>
+          <Box p={2}>
+            <Typography>Your Modification</Typography>
             <textarea
               className="generated-code"
-              value={JSON.stringify(formState, null, 2)}
+              // value={JSON.stringify(formState, null, 2)}
               readOnly
-              // value={JSON.stringify(parsedState, null, 2)}
+              value={JSON.stringify(parsedState, null, 2)}
             />
-            <Button onClick={install} color="primary" variant="contained">
-              Install!
-            </Button>
-            <Button onClick={generateUrl} color="primary" variant="contained">
-              Get Shareable Copy of this Rule
-            </Button>
-          </Grid>
-          {/* <Grid item xs>
-              <textarea
-                className="generated-code"
-                value={JSON.stringify(formState, null, 2)}
-                readOnly
-                // value={JSON.stringify(parseStateToMinimumJSON(formState), null, 2)}
-              />
-            </Grid> */}
-          {/* <Grid container item xs>
+
+            <Box mt={1} mb={1}>
+              <ButtonGroup fullWidth>
+                <Button onClick={install} color="primary" variant="contained">
+                  Install!
+                </Button>
+                <Button
+                  onClick={generateUrl}
+                  color="primary"
+                  variant="contained"
+                >
+                  Share!
+                </Button>
+              </ButtonGroup>
+            </Box>
             <textarea
-              placeholder="Try pasting existing complex modifications here. The simpler the better, everything is still experimental."
-              className="generated-code"
+              placeholder="Paste existing modification here to edit"
+              className="paste-code"
               onBlur={e => {
                 try {
                   if (e.target.value)
-                    setFormState(parseJSONfirst(e.target.value));
+                    dispatch(setWholeState(parseJSONfirst(e.target.value)));
                 } catch (e) {
                   console.log({ e });
                 }
               }}
             />
-          </Grid> */}
+          </Box>
         </Grid>
       </Grid>
     </Container>

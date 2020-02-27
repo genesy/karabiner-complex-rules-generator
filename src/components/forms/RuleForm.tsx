@@ -35,7 +35,7 @@ const RuleForm: React.FC<Props> = ({ rule, index }) => {
         }
         panelProps={{ defaultExpanded: index === 0 }}
       >
-        <Box flex justifyContent="flex-end">
+        <Box justifyContent="flex-end">
           <Button
             variant="text"
             size="small"

@@ -5,13 +5,19 @@ body,
   height: 100%;
 }
 
-.generated-code {
+textarea {
   /* height: 80%; */
   width: 100%;
   font-size: 12px;
   background: #ddd;
   font-family: 'Courier New', Courier, monospace;
-  min-height: 400px;
+  /* min-height: 400px; */
+}
+.generated-code {
+  height: 300px;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: scroll;
 }
 
 .MuiExpansionPanel-root {
@@ -20,4 +26,10 @@ body,
 
 .MuiExpansionPanel-root:hover {
   background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.form-wrapper {
+  max-height: calc(100vh - 57px);
+  overflow: auto;
+  position: relative;
 }

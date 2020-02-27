@@ -17,13 +17,13 @@ const AppLayout: React.FC<Props> = () => {
     <>
       <AppBar position="static">
         <Container>
-          <Toolbar>
+          <Toolbar variant="dense">
             <Grid xs item>
               <Typography>
                 Karabiner Complex Modification | Still a work in progress
               </Typography>
             </Grid>
-            <Grid xs={3} item container justify="space-evenly">
+            <Grid xs={3} item container justify="flex-end">
               <a
                 className="github-button"
                 href="https://github.com/genesy/karabiner-complex-rules-generator"
@@ -33,15 +33,6 @@ const AppLayout: React.FC<Props> = () => {
                 aria-label="Star genesy/karabiner-complex-rules-generator on GitHub"
               >
                 Star
-              </a>
-              <a
-                className="github-button"
-                href="https://github.com/genesy"
-                data-size="large"
-                data-show-count="true"
-                aria-label="Follow @genesy on GitHub"
-              >
-                Follow @genesy
               </a>
             </Grid>
           </Toolbar>

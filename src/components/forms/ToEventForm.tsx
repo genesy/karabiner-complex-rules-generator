@@ -94,7 +94,6 @@ const ToEventForm: React.FC<Props> = ({
           value={toObject.modifiers}
           label="Modifiers"
           onChange={(_e: any, value: any) => {
-            console.log({ value });
             setToObject({
               ...toObject,
               modifiers: value.map((v: any) =>

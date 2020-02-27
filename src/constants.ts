@@ -362,3 +362,5 @@ export const KEY_CODES = [
     value: 'volume_increment',
   },
 ];
+
+export const ALL_KEYS = [...MODIFIERS, ...KEY_CODES];

@@ -6,7 +6,7 @@ import produce from 'immer';
 import IFromEventDefinition from '../types/IFromEventDefinition';
 import IToEventDefinition from '../types/IToEventDefinition';
 
-const initialManipulator: IManipulator = {
+export const initialManipulator: IManipulator = {
   type: 'basic',
   from: {
     modifiers: {
@@ -50,10 +50,15 @@ const SET_MANIPULATOR = 'SET_MANIPULATOR';
 const SET_FROM_OBJECT = 'SET_FROM_OBJECT';
 const ADD_TO_OBJECT = 'ADD_TO_OBJECT';
 const SET_TO_OBJECT = 'SET_TO_OBJECT';
+const SET_WHOLE_STATE = 'SET_WHOLE_STATE';
 
 export const formStateReducer = (state = initialFormState, action: any) => {
   return produce(state, draft => {
     switch (action.type) {
+      case SET_WHOLE_STATE:
+        draft.title = action.payload.state.title;
+        draft.rules = action.payload.state.rules;
+        break;
       case REMOVE_RULE:
         draft.rules.splice(action.payload.index, 1);
         break;
@@ -73,9 +78,7 @@ export const formStateReducer = (state = initialFormState, action: any) => {
       case ADD_MANIPULATOR:
         if (action.payload) {
           const { ruleIndex } = action.payload;
-          draft.rules[ruleIndex].manipulators.push({
-            ...initialManipulator,
-          });
+          draft.rules[ruleIndex].manipulators.push(initialManipulator);
         }
         break;
       case SET_MANIPULATOR:
@@ -130,6 +133,13 @@ export const formStateReducer = (state = initialFormState, action: any) => {
         break;
     }
   });
+};
+
+export const setWholeState = (state: any) => {
+  return {
+    type: SET_WHOLE_STATE,
+    payload: { state },
+  };
 };
 
 export const setTitle = (title: string) => {
