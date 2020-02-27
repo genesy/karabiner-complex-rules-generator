@@ -7,7 +7,6 @@ import _ from 'lodash';
 import IRule from '../types/IRule';
 import IManipulator from '../types/IManipulator';
 import IFromEventDefinition from '../types/IFromEventDefinition';
-import { initialFromObject } from '../initialStates';
 import IToEventDefinition from '../types/IToEventDefinition';
 import ISimultaneous from '../types/ISimultaneous';
 import { useDispatch, useSelector } from 'react-redux';
@@ -73,49 +72,40 @@ const parseKeys = (modifiers: any[]) => {
 };
 
 const parseFromObject = (fromObject: IFromEventDefinition) => {
-  const _from: IFromEventDefinition = Object.assign(
-    {},
-    initialFromObject,
-    fromObject,
-  );
-
-  if (typeof _from.key_code === 'object') {
-    _from.key_code = parseKey(_from.key_code);
-  }
-
-  if (_from.modifiers) {
-    if (_from.modifiers.mandatory) {
-      if (_from.modifiers.mandatory?.length === 0) {
-        delete _from.modifiers.mandatory;
-      } else {
-        if (typeof _from.modifiers.mandatory === 'string') {
-          _from.modifiers.mandatory = [_from.modifiers.mandatory];
-        }
-        _from.modifiers.mandatory = parseKeys(_from.modifiers.mandatory);
-      }
-    }
-
-    if (_from.modifiers.optional) {
-      if (_from.modifiers.optional.length === 0) {
-        delete _from.modifiers.optional;
-      } else {
-        if (typeof _from.modifiers.optional === 'string') {
-          _from.modifiers.optional = [_from.modifiers.optional];
-        }
-        _from.modifiers.optional = parseKeys(_from.modifiers.optional);
-      }
-    }
-  }
-
-  if (!_from.pointing_button || _from.pointing_button === 'disabled') {
-    delete _from.pointing_button;
-  }
-
-  if (_.isEmpty(_from.modifiers)) {
-    delete _from.modifiers;
-  }
-
-  return _from;
+  return fromObject;
+  // const _from: any = Object.assign({}, initialFromObject, fromObject);
+  // if (typeof _from.key_code === 'object') {
+  //   _from.key_code = parseKey(_from.key_code);
+  // }
+  // if (_from.modifiers) {
+  //   if (_from.modifiers.mandatory) {
+  //     if (_from.modifiers.mandatory?.length === 0) {
+  //       delete _from.modifiers.mandatory;
+  //     } else {
+  //       if (typeof _from.modifiers.mandatory === 'string') {
+  //         _from.modifiers.mandatory = [_from.modifiers.mandatory];
+  //       }
+  //       _from.modifiers.mandatory = parseKeys(_from.modifiers.mandatory);
+  //     }
+  //   }
+  //   if (_from.modifiers.optional) {
+  //     if (_from.modifiers.optional.length === 0) {
+  //       delete _from.modifiers.optional;
+  //     } else {
+  //       if (typeof _from.modifiers.optional === 'string') {
+  //         _from.modifiers.optional = [_from.modifiers.optional];
+  //       }
+  //       _from.modifiers.optional = parseKeys(_from.modifiers.optional);
+  //     }
+  //   }
+  // }
+  // if (!_from.pointing_button || _from.pointing_button === 'disabled') {
+  //   delete _from.pointing_button;
+  // }
+  // if (_.isEmpty(_from.modifiers)) {
+  //   delete _from.modifiers;
+  // }
+  // return _from;
 };
 
 const parseStateToMinimumJSON = (state: any) => {
@@ -233,7 +223,7 @@ const MainForm: React.FC<Props> = () => {
   return (
     <Container>
       <Grid container direction="row" justify="space-between">
-        <Grid item xs={9}>
+        <Grid item xs={8}>
           {titleForm}
           <Box p={1}>
             {formState.rules.map((rule, index) => (
@@ -253,7 +243,7 @@ const MainForm: React.FC<Props> = () => {
           </Box>
         </Grid>
 
-        <Grid container xs={3} item direction="column">
+        <Grid container xs={4} item direction="column">
           <Grid item xs>
             <textarea
               className="generated-code"

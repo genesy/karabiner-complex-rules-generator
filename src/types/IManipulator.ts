@@ -15,8 +15,8 @@ export default interface IManipulator {
   to_if_alone: IToEventDefinition[];
   to_if_held_down: IToEventDefinition[];
   to_after_key_up: IToEventDefinition[];
-  to_delayed_action: IToDelayedAction;
-  conditions?: ICondition[];
+  to_delayed_action: IToDelayedAction | any;
+  conditions: ICondition[];
   parameters?: any;
   _id?: string;
 }

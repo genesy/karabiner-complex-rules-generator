@@ -10,7 +10,7 @@ interface ISimultaneousOptions {
   key_down_order?: KeyOrder | unknown;
   key_up_order?: KeyOrder | unknown;
   key_up_when?: KeyUpWhen | unknown;
-  to_after_key_up?: IToEventDefinition[];
+  to_after_key_up: IToEventDefinition[];
 }
 export default interface IFromEventDefinition {
   key_code?: string;
@@ -20,6 +20,6 @@ export default interface IFromEventDefinition {
     mandatory?: any[];
     optional?: any[];
   };
-  simultaneous?: ISimultaneous[];
-  simultaneous_options?: ISimultaneousOptions;
+  simultaneous: ISimultaneous[];
+  simultaneous_options: ISimultaneousOptions;
 }

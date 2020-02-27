@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { setFromObject } from '../../ducks/formState';
 import ISimultaneous from '../../types/ISimultaneous';
 import ToEventForm from './ToEventForm';
+import IToEventDefinition from '../../types/IToEventDefinition';
 
 const optionalBoolean: string[] = ['none', 'true', 'false'];
 const keyOrder: string[] = ['none', 'insensitive', 'strict', 'strict_inverse'];
@@ -232,8 +233,27 @@ const FromEventForm: React.FC<Props> = ({
 
             <Box mt={1}>
               {fromObject.simultaneous_options?.to_after_key_up?.map(
-                toEvent => {
-                  return 'not yet done';
+                (toEvent: IToEventDefinition, index: number) => {
+                  return (
+                    <ToEventForm
+                      toObject={toEvent}
+                      setToObject={(toObject: IToEventDefinition) => {
+                        const newFromObject = { ...fromObject };
+                        const currentToField = [
+                          ...newFromObject.simultaneous_options.to_after_key_up,
+                        ];
+                        currentToField[index] = toObject;
+                        newFromObject.simultaneous_options = {
+                          to_after_key_up: currentToField,
+                        };
+                        _setFromObject(newFromObject);
+                      }}
+                      removeToObject={() => {}}
+                      index={index}
+                      toField="to_after_key_up"
+                      key={index}
+                    />
+                  );
                 },
               )}
               <Button

@@ -10,10 +10,13 @@ import {
 } from '@material-ui/core';
 import { titleCase } from '../../helpers';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
+import IManipulator from '../../types/IManipulator';
 
 interface Props {
   condition: any;
   index: number;
+  setManipulator: (arg0: IManipulator) => void;
+  manipulator: IManipulator;
 }
 
 const conditionTypes: string[] = [
@@ -21,8 +24,18 @@ const conditionTypes: string[] = [
   'frontmost_application_unless',
 ];
 
-const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
-  const [conditionState, setConditionState] = useState(condition);
+const AddConditionForm: React.FC<Props> = ({
+  condition,
+  index,
+  setManipulator,
+  manipulator,
+}) => {
+  const setConditionState = (condition: any) => {
+    const newManipulator = { ...manipulator };
+    newManipulator.conditions = [...manipulator.conditions];
+    newManipulator.conditions[index] = condition;
+    setManipulator(newManipulator);
+  };
 
   const [showOptional, setShowOptional] = useState({
     description: false,
@@ -30,33 +43,32 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
 
   const addBundleIdentifier = () => {
     const newCondition: any = { ...condition };
+    newCondition.bundle_identifiers = newCondition.bundle_identifiers || [];
     newCondition.bundle_identifiers.push('');
     setConditionState(newCondition);
   };
 
   const addFilePath = () => {
     const newCondition: any = { ...condition };
+    newCondition.file_paths = newCondition.file_paths || [];
     newCondition.file_paths.push('');
     setConditionState(newCondition);
   };
 
   const setFilePath = (bundleIndex: number, value: string) => {
     const newCondition: any = { ...condition };
-    newCondition.file_paths[bundleIndex] = value;
+    const filePaths = [...newCondition.file_paths];
+    filePaths[bundleIndex] = value;
+    newCondition.bundle_identifiers = filePaths;
     setConditionState(newCondition);
   };
   const setBundleIdentifier = (bundleIndex: number, value: string) => {
     const newCondition: any = { ...condition };
-    newCondition.bundle_identifiers[bundleIndex] = value;
+    const bundleIdentifiers = [...newCondition.bundle_identifiers];
+    bundleIdentifiers[bundleIndex] = value;
+    newCondition.bundle_identifiers = bundleIdentifiers;
     setConditionState(newCondition);
   };
-
-  useEffect(() => {
-    setConditionState(condition);
-    // const newConditions = [...ruleState.conditions];
-    // newConditions[index] = condition;
-    // setRuleState(ruleIndex, { ...ruleState, conditions: newConditions });
-  }, [condition]);
 
   return (
     <AppExpansionPanel
@@ -65,7 +77,13 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
     >
       <FormControl fullWidth variant="filled">
         <InputLabel id="condition_type">Condition Type</InputLabel>
-        <Select labelId="condition_type" value={conditionTypes[0]}>
+        <Select
+          labelId="condition_type"
+          value={condition.type}
+          onChange={e => {
+            setConditionState({ ...condition, type: e.target.value });
+          }}
+        >
           {conditionTypes.map(item => (
             <MenuItem value={item} key={item}>
               {titleCase(item)}
@@ -103,6 +121,7 @@ const AddConditionForm: React.FC<Props> = ({ condition, index }) => {
           {condition.file_paths.map(
             (filePath: string, filePathIndex: number) => (
               <TextField
+                key={filePathIndex}
                 value={filePath}
                 fullWidth
                 variant="filled"

@@ -182,12 +182,7 @@ const KeyCodeAndPointingButtonInput: React.FC<Props> = ({
         </Box>
       </Box>
     ),
-    [
-      showOptional,
-      eventObject.key_code,
-      eventObject.consumer_key_code,
-      eventObject.pointing_button,
-    ],
+    [showOptional, eventObject],
   );
 };
 

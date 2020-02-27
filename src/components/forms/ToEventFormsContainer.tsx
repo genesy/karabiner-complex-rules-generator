@@ -16,16 +16,30 @@ const toFields: string[] = [
   'to_after_key_up',
 ];
 
+const toDelayedAction: string[] = ['to_if_invoked', 'to_if_canceled'];
+
 interface Props {
   manipulator: IManipulator;
   manipulatorIndex: number;
   ruleIndex: number;
 }
-const ToEventFormsContainer: React.FC<Props> = ({
+
+const TheForm = ({
+  to,
+  index,
+  toField,
   manipulator,
   ruleIndex,
   manipulatorIndex,
+}: {
+  to: IToEventDefinition;
+  index: number;
+  toField: string;
+  manipulator: IManipulator;
+  ruleIndex: number;
+  manipulatorIndex: number;
 }) => {
+  const toObject = { ...to };
   const dispatch = useDispatch();
   const _setManipulator = (newManipulator: IManipulator) =>
     dispatch(
@@ -35,6 +49,49 @@ const ToEventFormsContainer: React.FC<Props> = ({
         index: manipulatorIndex,
       }),
     );
+  const setToObject = (newToObject: IToEventDefinition) => {
+    const newManipulator = { ...manipulator };
+    if (toDelayedAction.includes(toField)) {
+      const _toDelayedAction = { ...newManipulator.to_delayed_action };
+      _toDelayedAction[toField] = [..._toDelayedAction[toField]];
+      _toDelayedAction[toField][index] = newToObject;
+      newManipulator.to_delayed_action = _toDelayedAction;
+    } else {
+      const _toField = [...newManipulator[toField]];
+      _toField[index] = newToObject;
+      newManipulator[toField] = _toField;
+    }
+    _setManipulator(newManipulator);
+  };
+  const removeToObject = () => {
+    const newManipulator = { ...manipulator };
+    if (toDelayedAction.includes(toField)) {
+      const _toDelayedAction = { ...newManipulator.to_delayed_action };
+      _toDelayedAction[toField] = [..._toDelayedAction[toField]];
+      _toDelayedAction[toField].splice(index, 1);
+      newManipulator.to_delayed_action = _toDelayedAction;
+    } else {
+      const _toField = [...newManipulator[toField]];
+      _toField.splice(index, 1);
+      newManipulator[toField] = _toField;
+    }
+    _setManipulator(newManipulator);
+  };
+
+  const toEventFormProps = {
+    toObject,
+    setToObject,
+    removeToObject,
+    index,
+    toField,
+  };
+  return <ToEventForm {...toEventFormProps} key={index} />;
+};
+const ToEventFormsContainer: React.FC<Props> = ({
+  manipulator,
+  ruleIndex,
+  manipulatorIndex,
+}) => {
   return (
     <Box>
       {toFields.map((toField: string, toFieldsIndex: number) => {
@@ -42,42 +99,20 @@ const ToEventFormsContainer: React.FC<Props> = ({
           !!manipulator[toField]?.length && (
             <AppExpansionPanel
               key={toFieldsIndex}
-              panelProps={{ defaultExpanded: true }}
               title={`"${titleCase(toField)}" Events`}
             >
               {manipulator[toField].map(
                 (to: IToEventDefinition, index: number) => {
-                  const toObject = { ...to };
-                  const setToObject = (newToObject: IToEventDefinition) => {
-                    const newManipulator = { ...manipulator };
-                    const _toField = [...newManipulator[toField]];
-                    _toField[index] = newToObject;
-                    newManipulator[toField] = _toField;
-                    _setManipulator(newManipulator);
-                  };
-                  const removeToObject = () => {
-                    const newManipulator = { ...manipulator };
-                    const _toField = [...newManipulator[toField]];
-                    _toField.splice(index, 1);
-                    newManipulator[toField] = _toField;
-                    _setManipulator(newManipulator);
-                  };
-
-                  const toEventFormProps = {
-                    toObject,
-                    setToObject,
-                    removeToObject,
-                  };
                   return (
-                    <AppExpansionPanel
+                    <TheForm
+                      to={to}
+                      index={index}
+                      toField={toField}
                       key={index}
-                      panelProps={{ defaultExpanded: index === 0 }}
-                      title={`${index + 1}${suffix(index + 1)} "${titleCase(
-                        toField,
-                      )}" Event`}
-                    >
-                      <ToEventForm {...toEventFormProps} />
-                    </AppExpansionPanel>
+                      ruleIndex={ruleIndex}
+                      manipulatorIndex={manipulatorIndex}
+                      manipulator={manipulator}
+                    />
                   );
                 },
               )}
@@ -85,39 +120,32 @@ const ToEventFormsContainer: React.FC<Props> = ({
           )
         );
       })}
-      {manipulator.to_delayed_action.to_if_canceled && (
-        <AppExpansionPanel title="to_if_canceled">
-          {manipulator.to_delayed_action.to_if_canceled.map(
-            (toObject: IToEventDefinition, index: number) => {
-              const setToObject = (newToObject: IToEventDefinition) => {
-                const newManipulator = { ...manipulator };
-                const _toField = [
-                  ...newManipulator.to_delayed_action.to_if_canceled,
-                ];
-                _toField[index] = newToObject;
-                newManipulator.to_delayed_action.to_if_canceled = _toField;
-                _setManipulator(newManipulator);
-              };
-              const removeToObject = () => {
-                const newManipulator = { ...manipulator };
-                const _toField = [
-                  ...newManipulator.to_delayed_action.to_if_canceled,
-                ];
-                _toField.splice(index, 1);
-                newManipulator.to_delayed_action.to_if_canceled = _toField;
-                _setManipulator(newManipulator);
-              };
-
-              const toEventFormProps = {
-                toObject,
-                setToObject,
-                removeToObject,
-              };
-              return <ToEventForm {...toEventFormProps} />;
-            },
-          )}
-        </AppExpansionPanel>
-      )}
+      {toDelayedAction.map((toField: string) => {
+        return (
+          !!manipulator.to_delayed_action[toField]?.length && (
+            <AppExpansionPanel
+              key={toField}
+              title={`"${titleCase(toField)}" Events`}
+            >
+              {manipulator.to_delayed_action[toField].map(
+                (to: IToEventDefinition, index: number) => {
+                  return (
+                    <TheForm
+                      to={to}
+                      index={index}
+                      toField={toField}
+                      key={index}
+                      ruleIndex={ruleIndex}
+                      manipulatorIndex={manipulatorIndex}
+                      manipulator={manipulator}
+                    />
+                  );
+                },
+              )}
+            </AppExpansionPanel>
+          )
+        );
+      })}
     </Box>
   );
 };

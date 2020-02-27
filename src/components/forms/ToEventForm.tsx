@@ -13,17 +13,23 @@ import {
 import KeyInput from '../shared/KeyInput';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IManipulator from '../../types/IManipulator';
+import AppExpansionPanel from '../shared/AppExpansionPanel';
+import { suffix, titleCase } from '../../helpers';
 
 interface Props {
   toObject: IToEventDefinition;
   setToObject: (arg0: IToEventDefinition) => void;
   removeToObject: () => void;
+  index: number;
+  toField: string;
 }
 
 const ToEventForm: React.FC<Props> = ({
   toObject,
   setToObject,
   removeToObject,
+  index,
+  toField,
 }) => {
   const [showOptional, setShowOptional] = useState({
     keyCode: false,
@@ -73,8 +79,10 @@ const ToEventForm: React.FC<Props> = ({
     //   [type]: toArray,
     // });
   }, [toObject, showOptional]);
-  return useMemo(
-    () => (
+  return (
+    <AppExpansionPanel
+      title={`${index + 1}${suffix(index + 1)} "${titleCase(toField)}" Event`}
+    >
       <Box className="form-container">
         <KeyCodeAndPointingButtonInput
           setEventObject={setToObject}
@@ -141,8 +149,7 @@ const ToEventForm: React.FC<Props> = ({
           Remove
         </Button>
       </Box>
-    ),
-    [toObject],
+    </AppExpansionPanel>
   );
 };
 

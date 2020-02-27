@@ -16,8 +16,10 @@ const initialManipulator: IManipulator = {
     simultaneous: [],
     simultaneous_options: {
       detect_key_down_uninterruptedly: false,
+      to_after_key_up: [],
     },
   },
+  conditions: [],
   to: [],
   to_after_key_up: [],
   to_if_alone: [],
