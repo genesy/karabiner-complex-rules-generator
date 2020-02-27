@@ -35,7 +35,17 @@ const RuleForm: React.FC<Props> = ({ rule, index }) => {
         }
         panelProps={{ defaultExpanded: index === 0 }}
       >
-        <Box>
+        <Box flex justifyContent="flex-end">
+          <Button
+            variant="text"
+            size="small"
+            color="secondary"
+            onClick={() => dispatch(removeRule(index))}
+          >
+            Delete Rule!
+          </Button>
+        </Box>
+        <Box mt={2}>
           {rule.manipulators.map(
             (manipulator: IManipulator, manipulatorIndex: number) => {
               return (
@@ -51,15 +61,13 @@ const RuleForm: React.FC<Props> = ({ rule, index }) => {
         </Box>
 
         <Box mt={2}>
-          <Button onClick={() => dispatch(addManipulator(index))}>
-            Add Manipulator
-          </Button>
           <Button
+            fullWidth
             variant="contained"
-            color="secondary"
-            onClick={() => dispatch(removeRule(index))}
+            color="primary"
+            onClick={() => dispatch(addManipulator(index))}
           >
-            Delete Rule! cannot be undone
+            Add Manipulator
           </Button>
         </Box>
       </AppExpansionPanel>

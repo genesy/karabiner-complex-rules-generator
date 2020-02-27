@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@material-ui/core';
+import { Box, Button, ButtonGroup } from '@material-ui/core';
 
 import { titleCase, suffix } from '../../helpers';
 import ToEventForm from './ToEventForm';
@@ -7,7 +7,7 @@ import IManipulator from '../../types/IManipulator';
 import IToEventDefinition from '../../types/IToEventDefinition';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import { useDispatch } from 'react-redux';
-import { setManipulator } from '../../ducks/formState';
+import { setManipulator, addToObject } from '../../ducks/formState';
 
 const toFields: string[] = [
   'to',
@@ -41,6 +41,7 @@ const TheForm = ({
 }) => {
   const toObject = { ...to };
   const dispatch = useDispatch();
+
   const _setManipulator = (newManipulator: IManipulator) =>
     dispatch(
       setManipulator({
@@ -92,14 +93,20 @@ const ToEventFormsContainer: React.FC<Props> = ({
   ruleIndex,
   manipulatorIndex,
 }) => {
+  const dispatch = useDispatch();
+  const addToEventForm = (toField: string) => {
+    dispatch(addToObject({ manipulatorIndex, ruleIndex, toField }));
+  };
   return (
     <Box>
       {toFields.map((toField: string, toFieldsIndex: number) => {
         return (
-          !!manipulator[toField]?.length && (
+          <Box mb={2}>
             <AppExpansionPanel
               key={toFieldsIndex}
-              title={`"${titleCase(toField)}" Events`}
+              title={`${manipulator[toField].length} "${titleCase(
+                toField,
+              )}" Events`}
             >
               {manipulator[toField].map(
                 (to: IToEventDefinition, index: number) => {
@@ -116,16 +123,35 @@ const ToEventFormsContainer: React.FC<Props> = ({
                   );
                 },
               )}
+              <Box mt={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    addToEventForm(toField);
+                  }}
+                  fullWidth
+                >
+                  add {toField} event
+                </Button>
+              </Box>
             </AppExpansionPanel>
-          )
+          </Box>
         );
       })}
-      {toDelayedAction.map((toField: string) => {
-        return (
-          !!manipulator.to_delayed_action[toField]?.length && (
+
+      <AppExpansionPanel
+        title={`${manipulator.to_delayed_action.to_if_canceled.length +
+          manipulator.to_delayed_action.to_if_invoked
+            .length} "To Delayed Action" Events`}
+      >
+        {toDelayedAction.map((toField: string) => {
+          return (
             <AppExpansionPanel
               key={toField}
-              title={`"${titleCase(toField)}" Events`}
+              title={`${
+                manipulator.to_delayed_action[toField].length
+              } "${titleCase(toField)}" Events`}
             >
               {manipulator.to_delayed_action[toField].map(
                 (to: IToEventDefinition, index: number) => {
@@ -142,10 +168,22 @@ const ToEventFormsContainer: React.FC<Props> = ({
                   );
                 },
               )}
+              <Box mt={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={() => {
+                    addToEventForm(toField);
+                  }}
+                >
+                  Add {toField} Event
+                </Button>
+              </Box>
             </AppExpansionPanel>
-          )
-        );
-      })}
+          );
+        })}
+      </AppExpansionPanel>
     </Box>
   );
 };

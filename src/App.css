@@ -17,3 +17,7 @@ body,
 .MuiExpansionPanel-root {
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
+
+.MuiExpansionPanel-root:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}

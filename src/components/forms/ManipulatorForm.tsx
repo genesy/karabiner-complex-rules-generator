@@ -138,53 +138,11 @@ const ManipulatorForm: React.FC<Props> = ({
           </AppExpansionPanel>
         )}
 
-        <Box>
-          <Typography>Add "To" Events</Typography>
-          <ButtonGroup>
-            {toFields.map((toField: string) => {
-              return (
-                <Button
-                  key={toField}
-                  variant="contained"
-                  color="primary"
-                  onClick={() => {
-                    addToEventForm(toField);
-                  }}
-                  size="small"
-                >
-                  {toField}
-                </Button>
-              );
-            })}
-          </ButtonGroup>
-          <Typography>to_delayed_action</Typography>
-          <ButtonGroup>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => {
-                addToEventForm('to_if_invoked');
-              }}
-            >
-              Add to_if_invoked
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => {
-                addToEventForm('to_if_canceled');
-              }}
-            >
-              Add to_if_canceled
-            </Button>
-          </ButtonGroup>
-        </Box>
         <Box marginTop={1}>
           <Button
             color="primary"
             variant="contained"
+            fullWidth
             onClick={() => {
               addConditionToRule();
             }}
