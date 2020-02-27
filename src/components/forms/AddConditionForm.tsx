@@ -44,14 +44,18 @@ const AddConditionForm: React.FC<Props> = ({
   const addBundleIdentifier = () => {
     const newCondition: any = { ...condition };
     newCondition.bundle_identifiers = newCondition.bundle_identifiers || [];
-    newCondition.bundle_identifiers.push('');
+    const bundleIdentifiers = [...newCondition.bundle_identifiers];
+    bundleIdentifiers.push('');
+    newCondition.bundle_identifiers = bundleIdentifiers;
     setConditionState(newCondition);
   };
 
   const addFilePath = () => {
     const newCondition: any = { ...condition };
     newCondition.file_paths = newCondition.file_paths || [];
-    newCondition.file_paths.push('');
+    const filePaths = [...newCondition.file_paths];
+    filePaths.push('');
+    newCondition.file_paths = filePaths;
     setConditionState(newCondition);
   };
 
