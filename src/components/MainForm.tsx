@@ -18,13 +18,6 @@ interface FormState {
   title: string;
   rules: any[];
 }
-const generateWithId = (obj: any = {}, prefix: string = '') => {
-  if (prefix.length) {
-    prefix += '_';
-  }
-  return { ...obj, _id: _.uniqueId(prefix) };
-};
-
 // TODO: move to separate file
 const toFields: string[] = [
   'to',
@@ -38,21 +31,21 @@ const parseJSONfirst = (text: string) => {
 
   // make sure from values have modifiers object
   parsedJSON.rules = parsedJSON.rules.map((rule: IRule) => {
-    const newRule: IRule = generateWithId(rule, 'rule');
+    const newRule = { ...rule };
     newRule.manipulators = newRule.manipulators.map(
       (manipulator: IManipulator) => {
-        const newManipulator = generateWithId(manipulator, 'manipulator');
+        const newManipulator = { ...manipulator };
         toFields.forEach((toField: string) => {
           if (newManipulator[toField]) {
             if (_.isPlainObject(newManipulator[toField])) {
               newManipulator[toField] = [newManipulator[toField]];
             }
             // newManipulator[toField] = [...manipulator[toField]];
-            newManipulator[toField] = newManipulator[toField].map(
-              (toObject: IToEventDefinition) => {
-                return generateWithId(toObject, toField);
-              },
-            );
+            // newManipulator[toField] = newManipulator[toField].map(
+            //   (toObject: IToEventDefinition) => {
+            //     return {...}
+            //   },
+            // );
           }
         });
 
@@ -121,7 +114,6 @@ const parseStateToMinimumJSON = (state: any) => {
       const newSimultaneous: ISimultaneous[] = [];
       manipulator?.from?.simultaneous?.forEach(
         (simultaneous: ISimultaneous) => {
-          delete simultaneous._id;
           if (simultaneous?.key_code?.value) {
             simultaneous.key_code = simultaneous.key_code.value;
           }
@@ -135,7 +127,6 @@ const parseStateToMinimumJSON = (state: any) => {
         if (!manipulator[toField]) return;
         manipulator[toField] = manipulator[toField].map(
           (toObject: IToEventDefinition) => {
-            delete toObject._id;
             if (toObject.key_code) {
               toObject.key_code = parseKey(toObject.key_code);
             }
@@ -154,9 +145,7 @@ const parseStateToMinimumJSON = (state: any) => {
       if (_.isEmpty(manipulator.from.simultaneous)) {
         delete manipulator.from.simultaneous;
       }
-      delete manipulator._id;
     });
-    delete rule._id;
   });
 
   return parsedState;
@@ -179,22 +168,6 @@ const MainForm: React.FC<Props> = () => {
   // const [formState, setFormState] = useState<FormState>(initialFormState);
 
   const parsedState = parseStateToMinimumJSON(formState);
-
-  // const setRule = (newRule: IRule) => {
-  //   const index = _.findIndex(formState.rules, { _id: newRule._id });
-  //   const newFormState = _.cloneDeep(formState);
-  //   newFormState.rules[index] = { ...newFormState.rules[index], ...newRule };
-  //   setFormState({ ...newFormState });
-  // };
-
-  // const getRuleByIndex = (index: number): any => formState.rules[index];
-
-  // const addRule = () => {
-  //   const newFormState = { ...formState };
-  //   newFormState.rules = newFormState.rules || [];
-  //   newFormState.rules.push(getInitialRule());
-  //   setFormState({ ...newFormState });
-  // };
 
   const install = () => {
     const base64string = window.btoa(JSON.stringify(parsedState));

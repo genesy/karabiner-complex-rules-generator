@@ -56,10 +56,7 @@ const FromEventForm: React.FC<Props> = ({
   const addSimultaneous = () => {
     const newFromObject = { ...fromObject };
     newFromObject.simultaneous = newFromObject.simultaneous || [];
-    newFromObject.simultaneous = [
-      ...newFromObject.simultaneous,
-      { _id: _.uniqueId('simultaneous_') },
-    ];
+    newFromObject.simultaneous = [...newFromObject.simultaneous, {}];
     _setFromObject(newFromObject);
   };
 

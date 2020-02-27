@@ -16,12 +16,6 @@ interface Props {
 }
 
 const RuleForm: React.FC<Props> = ({ rule, index }) => {
-  // const setManipulator = (newManipulator: IManipulator) => {
-  //   const manipulatorIndex = _.findIndex(rule.manipulators, { _id: newManipulator._id });
-  //   const newRule = { ...rule };
-  //   newRule.manipulators[index] = { ...newManipulator };
-  //   setRule(index, newRule);
-  // };
   const dispatch = useDispatch();
   return useMemo(
     () => (

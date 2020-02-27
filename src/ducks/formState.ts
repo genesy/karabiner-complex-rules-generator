@@ -33,13 +33,7 @@ const initialManipulator: IManipulator = {
 const getInitialRule = (): IRule => {
   return {
     description: '',
-    _id: _.uniqueId('rule_'),
-    manipulators: [
-      {
-        ...initialManipulator,
-        _id: _.uniqueId('manipulator_'),
-      },
-    ],
+    manipulators: [initialManipulator],
   };
 };
 const initialFormState: IFormState = {
@@ -81,7 +75,6 @@ export const formStateReducer = (state = initialFormState, action: any) => {
           const { ruleIndex } = action.payload;
           draft.rules[ruleIndex].manipulators.push({
             ...initialManipulator,
-            _id: _.uniqueId('manipulator_'),
           });
         }
         break;
@@ -104,7 +97,6 @@ export const formStateReducer = (state = initialFormState, action: any) => {
           const { toField, ruleIndex, manipulatorIndex } = action.payload;
           const initToObj = {
             repeat: true,
-            _id: _.uniqueId(toField + '_'),
           };
           const manip = draft.rules[ruleIndex].manipulators[manipulatorIndex];
           if (toField === 'to_if_canceled' || toField === 'to_if_invoked') {
