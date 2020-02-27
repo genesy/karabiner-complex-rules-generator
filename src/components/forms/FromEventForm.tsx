@@ -81,6 +81,7 @@ const FromEventForm: React.FC<Props> = ({
           <div>
             <KeyInput
               modifiers
+              keyCodes
               value={fromObject.modifiers?.optional || []}
               label="Optional Modifiers (optional)"
               onChange={(event: any, value: any) =>

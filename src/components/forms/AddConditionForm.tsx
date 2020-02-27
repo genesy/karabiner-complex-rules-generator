@@ -7,10 +7,17 @@ import {
   Select,
   MenuItem,
   Button,
+  ButtonGroup,
 } from '@material-ui/core';
-import { titleCase } from '../../helpers';
+import { titleCase, withSuffix } from '../../helpers';
 import AppExpansionPanel from '../shared/AppExpansionPanel';
 import IManipulator from '../../types/IManipulator';
+import FrontmostConditionForm from './FrontmostConditionForm';
+import DeviceIfConditionForm from './DeviceIfConditionForm';
+import KeyboardTypeConditionForm from './KeyboardTypeConditionForm';
+import VariableConditionForm from './VariableConditionForm';
+import InputSourceConditionForm from './InputSourceConditionForm';
+import EventChangedConditionForm from './EventChangedConditionForm';
 
 interface Props {
   condition: any;
@@ -18,10 +25,19 @@ interface Props {
   setManipulator: (arg0: IManipulator) => void;
   manipulator: IManipulator;
 }
-
 const conditionTypes: string[] = [
   'frontmost_application_if',
   'frontmost_application_unless',
+  'device_if',
+  'device_unless',
+  'keyboard_type_if',
+  'keyboard_type_unless',
+  'input_source_if',
+  'input_source_unless',
+  'variable_if',
+  'variable_unless',
+  'event_changed_if',
+  'event_changed_unless',
 ];
 
 const AddConditionForm: React.FC<Props> = ({
@@ -32,52 +48,16 @@ const AddConditionForm: React.FC<Props> = ({
 }) => {
   const setConditionState = (condition: any) => {
     const newManipulator = { ...manipulator };
-    newManipulator.conditions = [...manipulator.conditions];
-    newManipulator.conditions[index] = condition;
+    const newConditions = [...manipulator.conditions];
+    newConditions[index] = condition;
+    newManipulator.conditions = newConditions;
     setManipulator(newManipulator);
-  };
-
-  const [showOptional, setShowOptional] = useState({
-    description: false,
-  });
-
-  const addBundleIdentifier = () => {
-    const newCondition: any = { ...condition };
-    newCondition.bundle_identifiers = newCondition.bundle_identifiers || [];
-    const bundleIdentifiers = [...newCondition.bundle_identifiers];
-    bundleIdentifiers.push('');
-    newCondition.bundle_identifiers = bundleIdentifiers;
-    setConditionState(newCondition);
-  };
-
-  const addFilePath = () => {
-    const newCondition: any = { ...condition };
-    newCondition.file_paths = newCondition.file_paths || [];
-    const filePaths = [...newCondition.file_paths];
-    filePaths.push('');
-    newCondition.file_paths = filePaths;
-    setConditionState(newCondition);
-  };
-
-  const setFilePath = (bundleIndex: number, value: string) => {
-    const newCondition: any = { ...condition };
-    const filePaths = [...newCondition.file_paths];
-    filePaths[bundleIndex] = value;
-    newCondition.bundle_identifiers = filePaths;
-    setConditionState(newCondition);
-  };
-  const setBundleIdentifier = (bundleIndex: number, value: string) => {
-    const newCondition: any = { ...condition };
-    const bundleIdentifiers = [...newCondition.bundle_identifiers];
-    bundleIdentifiers[bundleIndex] = value;
-    newCondition.bundle_identifiers = bundleIdentifiers;
-    setConditionState(newCondition);
   };
 
   return (
     <AppExpansionPanel
       panelProps={{ defaultExpanded: index === 0 }}
-      title={`Condition ${index + 1}`}
+      title={`${withSuffix(index + 1)} Condition`}
     >
       <FormControl fullWidth variant="filled">
         <InputLabel id="condition_type">Condition Type</InputLabel>
@@ -96,73 +76,52 @@ const AddConditionForm: React.FC<Props> = ({
         </Select>
       </FormControl>
 
-      {!!condition?.bundle_identifiers?.length && (
-        <AppExpansionPanel
-          panelProps={{ defaultExpanded: true }}
-          title="Bundle Identifiers"
-        >
-          {condition.bundle_identifiers.map(
-            (identifier: string, bundleIndex: number) => (
-              <TextField
-                key={bundleIndex}
-                value={identifier}
-                fullWidth
-                variant="filled"
-                label={`Regex Bundle Identifier ${bundleIndex + 1}`}
-                onChange={e => {
-                  setBundleIdentifier(bundleIndex, e.target.value);
-                }}
-              />
-            ),
-          )}
-        </AppExpansionPanel>
-      )}
-      {!!condition?.file_paths?.length && (
-        <AppExpansionPanel
-          panelProps={{ defaultExpanded: true }}
-          title="File Paths"
-        >
-          {condition.file_paths.map(
-            (filePath: string, filePathIndex: number) => (
-              <TextField
-                key={filePathIndex}
-                value={filePath}
-                fullWidth
-                variant="filled"
-                label={`Regex File Path ${filePathIndex + 1}`}
-                onChange={e => {
-                  setFilePath(filePathIndex, e.target.value);
-                }}
-              />
-            ),
-          )}
-        </AppExpansionPanel>
-      )}
+      <TextField
+        fullWidth
+        variant="filled"
+        label={`Condition Description (optional)`}
+        value={condition.description}
+        onChange={e => {
+          setConditionState({ ...condition, description: e.target.value });
+        }}
+      />
 
-      {showOptional.description && (
-        <TextField
-          fullWidth
-          variant="filled"
-          label={`Condition Description (optional)`}
-          value={condition.description}
-          onChange={e => {
-            setConditionState({ ...condition, description: e.target.value });
-          }}
+      {condition.type.indexOf('frontmost') === 0 && (
+        <FrontmostConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
         />
       )}
-
-      <Button onClick={addBundleIdentifier}>Add Bundle Identifier</Button>
-      <Button onClick={addFilePath}>Add File Path</Button>
-      <Button
-        onClick={() =>
-          setShowOptional({
-            ...showOptional,
-            description: !showOptional.description,
-          })
-        }
-      >
-        {showOptional.description ? 'Remove' : 'Add'} Description
-      </Button>
+      {condition.type.indexOf('device') === 0 && (
+        <DeviceIfConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
+        />
+      )}
+      {condition.type.indexOf('keyboard') === 0 && (
+        <KeyboardTypeConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
+        />
+      )}
+      {condition.type.indexOf('input_source') === 0 && (
+        <InputSourceConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
+        />
+      )}
+      {condition.type.indexOf('variable') === 0 && (
+        <VariableConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
+        />
+      )}
+      {condition.type.indexOf('event_changed') === 0 && (
+        <EventChangedConditionForm
+          condition={condition}
+          setConditionState={setConditionState}
+        />
+      )}
     </AppExpansionPanel>
   );
 };

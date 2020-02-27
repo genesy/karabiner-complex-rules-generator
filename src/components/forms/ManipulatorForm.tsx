@@ -74,10 +74,8 @@ const ManipulatorForm: React.FC<Props> = ({
   const addConditionToRule = () => {
     const newManipulator = { ...manipulator };
     newManipulator.conditions = newManipulator.conditions || [];
-    const newConditions = [
-      ...newManipulator.conditions,
-      { type: 'frontmost_application_if' },
-    ];
+    const newConditions = [...newManipulator.conditions];
+    newConditions.push({ type: 'frontmost_application_if' });
     newManipulator.conditions = newConditions;
     _setManipulator(newManipulator);
   };
@@ -191,7 +189,7 @@ const ManipulatorForm: React.FC<Props> = ({
               addConditionToRule();
             }}
           >
-            Add Conditions
+            Add Condition
           </Button>
         </Box>
       </AppExpansionPanel>
