@@ -230,6 +230,42 @@ export const KEY_CODES = [
     value: 'f12',
   },
   {
+    label: 'F12',
+    value: 'f12',
+  },
+  {
+    label: 'F12',
+    value: 'f12',
+  },
+  {
+    label: 'F13',
+    value: 'f13',
+  },
+  {
+    label: 'F14',
+    value: 'f14',
+  },
+  {
+    label: 'F15',
+    value: 'f15',
+  },
+  {
+    label: 'F16',
+    value: 'f16',
+  },
+  {
+    label: 'F17',
+    value: 'f17',
+  },
+  {
+    label: 'F18',
+    value: 'f18',
+  },
+  {
+    label: 'F19',
+    value: 'f19',
+  },
+  {
     label: 'Escape',
     value: 'escape',
   },
