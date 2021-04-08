@@ -346,8 +346,8 @@ export const KEY_CODES = [
     value: 'play_or_pause',
   },
   {
-    label: 'Fastfoward / Next',
-    value: 'fastforwad',
+    label: 'Fastforward / Next',
+    value: 'fastforward',
   },
   {
     label: 'Mute',
