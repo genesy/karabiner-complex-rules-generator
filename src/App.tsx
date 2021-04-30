@@ -12,7 +12,7 @@ function App() {
       <Header>
         <Navbar />
       </Header>
-      <Content>Content</Content>
+      <Content></Content>
     </Layout>
   );
 }
