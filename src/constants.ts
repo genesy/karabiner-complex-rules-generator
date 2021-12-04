@@ -258,6 +258,10 @@ export const KEY_CODES = [
     value: 'f19',
   },
   {
+    label: 'F20',
+    value: 'f20',
+  },
+  {
     label: 'Escape',
     value: 'escape',
   },
