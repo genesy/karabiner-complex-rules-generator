@@ -92,7 +92,7 @@ const parseFromObject = (fromObject: IFromEventDefinition): any => {
     return;
   }
 
-  if (typeof _from.key_code === 'object') {
+  if (typeof _from.key_code === 'object' && _from.key_code) {
     _from.key_code = parseKey(_from.key_code);
   }
   if (_from.modifiers) {
