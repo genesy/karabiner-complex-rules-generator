@@ -80,7 +80,7 @@ const parseJSONfirst = (text: any) => {
   return parsedJSON;
 };
 const parseKey = (key: any) =>
-  typeof key === 'string' ? key : key.value || '';
+  typeof key === 'string' ? key : key?.value || '';
 
 const parseKeys = (modifiers: any[]) => {
   return modifiers.map(parseKey);
