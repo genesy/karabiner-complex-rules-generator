@@ -154,7 +154,7 @@ const parseToObject = (toObject: IToEventDefinition): any => {
   if (typeof _to.key_code === 'object') {
     _to.key_code = parseKey(toObject.key_code);
   }
-  if (_to.modifiers?.length) {
+  if (Array.isArray(_to.modifiers) && _to.modifiers.length) {
     _to.modifiers = parseKeys(_to.modifiers);
   }
   return _to;
